@@ -1,0 +1,228 @@
+public class Arithmetic {
+
+	// =================================================================
+	// inc(A) returns an array of bits representing A+1.
+	// =================================================================
+
+	public static byte[] inc(byte[] A) {
+		byte[] temp = new byte[A.length + 1];
+
+		// loop to store items in A in temp
+		for (int i = 0; i < A.length; i++) {
+			temp[i] = A[i];
+		}
+
+		// loops to get each item in the byte array
+		for (int j = 0; j <= temp.length; j++) {
+
+			// if loop ends and and still have carry bit, add to last index
+			if (j == temp.length - 1) {
+				temp[j] = 1;
+				break;
+			}
+
+			// if bit is one, change to zero
+			if (temp[j] == 1) {
+				temp[j] = 0;
+			}
+
+			// if bit is zero, change to one
+			else {
+				temp[j] = 1;
+				break;
+			}
+
+		}
+
+		return temp;
+	}
+
+	// =================================================================
+	// sum(A,B) returns an array of bits representing A+B.
+	// =================================================================
+
+	public static byte[] sum(byte[] A, byte[] B) {
+
+		// stores the long length
+		int longLength = 0;
+		// holds new byte
+		byte[] temp = null;
+		// true if there is a carry bit, false if not
+		boolean carryBit = false;
+		// number of the index working with
+		int pos = 0;
+		// stores the largest byte
+		byte[] largeByte = null;
+		byte[] shortByte = null;
+		byte[] shortest = null;
+
+		// set information if A>B
+		if (A.length > B.length) {
+			longLength = A.length;
+			temp = new byte[longLength + 1];
+			largeByte = A;
+			shortByte = new byte[A.length];
+			shortest = B;
+		}
+
+		// set information if B>A
+		if (B.length > A.length) {
+			longLength = B.length;
+			temp = new byte[longLength + 1];
+			largeByte = B;
+			shortByte = new byte[B.length];
+			shortest = A;
+
+		}
+
+		// set information if B==A
+		if (B.length == A.length) {
+			longLength = B.length;
+			temp = new byte[longLength + 1];
+			largeByte = B;
+			shortByte = new byte[B.length];
+			shortest = A;
+		}
+
+		// make the two byte the same length
+		for (int j = 0; j < longLength; j++) {
+			if (j < shortest.length)
+				shortByte[j] = shortest[j];
+			else {
+				shortByte[j] = 0;
+			}
+		}
+
+		for (int i = 0; i < longLength; i++) {
+			pos++;
+			// adding 1 to 1
+			if (shortByte[i] == 1 && largeByte[i] == 1) {
+
+				// add carry bit
+				if (carryBit == true) {
+					temp[i] = 1;
+				} else {
+					temp[i] = 0;
+					carryBit = true;
+				}
+			}
+
+			// adding 0 to 0
+			if (shortByte[i] == 0 && largeByte[i] == 0) {
+
+				// add carry bit
+				if (carryBit == true) {
+					temp[i] = 1;
+					carryBit = false;
+				} else
+					temp[i] = 0;
+
+			}
+
+			// adding 1 to 0 or 0 to 1
+			if ((shortByte[i] == 0 && largeByte[i] == 1)
+					|| (shortByte[i] == 1 && largeByte[i] == 0)) {
+
+				// add carry bit
+				if (carryBit == true) {
+					temp[i] = 0;
+				} else {
+					temp[i] = 1;
+				}
+			}
+		}
+
+		// last position if carry
+		if (carryBit == true) {
+			temp[pos] = 1;
+		}
+
+		// returns temp
+		
+		return temp;
+	}
+
+	// =================================================================
+	// product(A,B) returns an array of bits representing A*B.
+	// =================================================================
+
+	public static byte[] product(byte[] A, byte[] B) {
+		
+		// array to be returned
+		byte[] returnArray = new byte[A.length + B.length + 1];
+		// temp for sum of two bits
+		byte[] temp = new byte[A.length + B.length + 1];
+		
+		// stores largest byte array
+		byte[] largest;
+		// stores shortest byte array
+		byte[] shortest;
+		
+		// shortest length
+		int shortLength = 0;
+		// longest length
+		int longLength = 0;
+		
+		// position working with
+		int pos = 0;
+		// shift
+		int shift = 0;
+
+		// stores data if A>B
+		if (A.length > B.length) {
+			shortLength = B.length;
+			longLength = A.length;
+			largest = A;
+			shortest = B;
+		}
+		// stores data if B>A or A==B
+		else {
+			shortLength = A.length;
+			longLength = B.length;
+			largest = B;
+			shortest = A;
+		}
+
+		// clears the returning array
+		for (int i = 0; i < returnArray.length; i++) {
+			returnArray[i] = 0;
+		}
+
+		// loops through by the shortest length
+		for (int j = 0; j < shortLength; j++) {
+			// set position to shift
+			pos = shift;
+			
+			// loops through by the largest length
+			for (int k = 0; k < longLength; k++) {
+				
+				// case 1 and 1
+				if (largest[k] == 1 && shortest[j] == 1) {
+					temp[pos] = 1;
+				}
+				// case 0 and anything
+				else {
+					temp[pos] = 0;
+				}
+				// increase position
+				pos++;
+
+			}
+			
+			// add together the returning array with the temp
+			returnArray = sum(returnArray, temp);
+			// moves to next bit
+			shift++;
+
+			// cleans temp for the next loop
+			for (int l = 0; l < temp.length; l++) {
+				temp[l] = 0;
+			}
+		}
+		
+		//returns final array
+		return returnArray;
+	}
+
+	
+}
