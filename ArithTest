@@ -1,0 +1,169 @@
+public class ArithmeticTest
+{
+		
+	public static String print(byte[] list){
+		String temp = "";
+		String reverse = "";
+		
+		//save byte in a string
+		for(int i = 0; i < list.length; i++){
+			temp += list[i];
+		}
+		
+		//reverse the string to be printed the right way
+		for(int j = temp.length(); j > 0; j--){
+			reverse += temp.charAt(j-1);
+		}
+		//prints the string 
+		return normalize(reverse);
+	}
+	
+	public static String normalize(String byteString){	
+		//remove any zeros at the from of the string
+		
+			while(byteString.charAt(0) == '0'){
+				if(byteString.length()==1){
+					return "";
+				}
+				else
+					byteString = byteString.substring(1);
+			
+			}
+		return byteString;
+	}
+	
+	
+	public static void main(String[] args){
+		String temp;
+		byte[] A = {0}; //0
+		byte[] B = {1}; //1
+		byte[] C = {0,1}; //10
+		byte[] D = {1,1}; //11
+		byte[] E = {1,0,0,1,0,1}; // 101001
+		byte[] F = {0,0,1,1,1,1,1,0,1}; //101111100
+		byte[] G = {1,1,1,1,1,1}; //111111
+		byte[] H = {1,1,1,1,1,1,1,1,1,1,1,1}; //111111111111
+		
+		System.out.println("---Given examples---\n");
+		temp=print(Arithmetic.sum(A, A));
+		System.out.println("0 + 0 = "+temp);
+		System.out.println("Actual answer: \"\"\n");
+		
+		temp=print(Arithmetic.product(A, A));
+		System.out.println("0 x 0 = "+temp);
+		System.out.println("Actual answer: \"\"\n");
+		
+		temp=print(Arithmetic.sum(A, B));
+		System.out.println("0 + 1 = "+temp);
+		System.out.println("Actual answer: 1\n");
+		
+		temp=print(Arithmetic.product(A, B));
+		System.out.println("0 x 1 = "+temp);
+		System.out.println("Actual answer: \"\"\n");
+		
+		temp=print(Arithmetic.sum(B, B));
+		System.out.println("1 + 1 = "+temp);
+		System.out.println("Actual answer: 10\n");
+		
+		temp=print(Arithmetic.product(B, B));
+		System.out.println("1 x 1 = "+temp);
+		System.out.println("Actual answer: 1\n");
+		
+		temp=print(Arithmetic.sum(C, D));
+		System.out.println("10 + 11 = "+temp);
+		System.out.println("Actual answer: 101\n");
+		
+		temp=print(Arithmetic.product(C, D));
+		System.out.println("10 x 11 = "+temp);
+		System.out.println("Actual answer: 110\n");
+		
+		temp=print(Arithmetic.sum(E, F));
+		System.out.println("101001 + 101111100 = "+temp);
+		temp=print(Arithmetic.sum(F, E));
+		System.out.println("101111100 + 101001 = "+temp);
+		System.out.println("Actual answer: 110100101\n");
+		
+		temp=print(Arithmetic.product(F, E));
+		System.out.println("101111100 x 101001 = "+temp);
+		System.out.println("Actual answer: 11110011011100\n");
+		
+		temp=print(Arithmetic.sum(G, H));
+		System.out.println("111111 + 111111111111= "+temp);
+		temp=print(Arithmetic.sum(H, G));
+		System.out.println("111111111111 + 111111= "+temp);
+		System.out.println("Actual answer: 1000000111110\n");
+		
+		temp=print(Arithmetic.product(H, G));
+		System.out.println("111111111111 x 111111= "+temp);
+		temp=print(Arithmetic.product(G, H));
+		System.out.println("111111 x 111111111111= "+temp);
+		System.out.println("Actual answer: 111110111111000001\n");
+		
+		System.out.println("---MY TESTS---\n");
+		
+		byte[] J = {1,0,1}; //101
+		byte[] K = {1,0,0,0,0,0,1}; //1000001
+		byte[] L = {1,1,0,1}; //1011
+		byte[] M = {1,1,1,1,1};//11111 
+		byte[] N = {0,0,0,0,0,1}; //100000 
+		byte[] O = {1,0,1,1}; //1101
+		
+		System.out.println("--------INC--------");
+		temp=print(Arithmetic.inc(J));
+		System.out.println("101++ = "+temp);
+		System.out.println("Actual answer: 110\n");
+		
+		temp=print(Arithmetic.inc(O));
+		System.out.println("1101++ = "+temp);
+		System.out.println("Actual answer: 1110\n");
+		
+		temp=print(Arithmetic.inc(M));
+		System.out.println("11111 = "+temp);
+		System.out.println("Actual answer: 100000\n");
+		
+		
+		
+		System.out.println("--------SUM--------");
+		temp=print(Arithmetic.sum(J, L));
+		System.out.println("101 + 1011 =   "+temp);
+		temp=print(Arithmetic.sum(L, J));
+		System.out.println("1011 + 101 =   "+temp);
+		System.out.println("Actual answer: 10000\n");
+		
+		temp=print(Arithmetic.sum(K, M));
+		System.out.println("1000001 + 11111 = "+temp);
+		temp=print(Arithmetic.sum(M, K));
+		System.out.println("11111 + 1000001 = "+temp);
+		System.out.println("Actual answer:    1100000\n");
+		
+		temp=print(Arithmetic.sum(M,O));
+		System.out.println("11111 + 1101 = "+temp);
+		temp=print(Arithmetic.sum(M,O));
+		System.out.println("1101 + 11111 = "+temp);
+		System.out.println("Actual answer: 101100\n");
+		
+		
+		
+		System.out.println("--------PRODUCT--------");
+		temp=print(Arithmetic.product(O,N));
+		System.out.println("1101 x 100000 = "+temp);
+		temp=print(Arithmetic.product(N,O));
+		System.out.println("100000 x 1101 = "+temp);
+		System.out.println("Actual answer:  110100000\n");
+		
+		temp=print(Arithmetic.product(M,L));
+		System.out.println("11111 x 1011 = "+temp);
+		temp=print(Arithmetic.product(L,M));
+		System.out.println("1011 x 11111 = "+temp);
+		System.out.println("Actual answer: 101010101\n");
+		
+		temp=print(Arithmetic.product(K,J));
+		System.out.println("1000001 x 101 = "+temp);
+		temp=print(Arithmetic.product(K,J));
+		System.out.println("101 x 1000001 = "+temp);
+		System.out.println("Actual answer:  101000101\n");
+		
+	}
+	
+	
+}
