@@ -1,1 +1,200 @@
-adsf
+%% Tabs: 2
+
+Package arithtest
+
+Import "arithmetic".
+
+%% The following functions are provided for convenience.
+
+Expect 
+  intToBinary: Integer -> [Integer]
+     %: intToBinary(n) is the binary equivalent of
+     %: nonnegative integer n.
+     ;
+
+  binaryToInt: [Integer] -> Integer
+     %: binaryToInt(x) is the integer that binary
+     %: list x stands for.
+%Expect
+
+Define 
+  case intToBinary (0)     = []
+  case intToBinary (2*n)   = 0 :: intToBinary(n)
+  case intToBinary (2*n+1) = 1 :: intToBinary(n)
+%Define
+
+Example
+  intToBinary(12) = [0,0,1,1]
+%Example
+
+Define 
+  case binaryToInt([])   = 0
+  case binaryToInt(0::x) = 2*binaryToInt(x)
+  case binaryToInt(1::x) = 2*binaryToInt(x) + 1
+%Define
+
+Example
+  binaryToInt([0,0,1,1]) = 12
+%Example
+
+
+%% Note: $(x) is x converted to a string.  It is similar
+%% to x.tostring() in Java.
+
+=======================================
+%%             TestInc(n)
+=======================================
+Define TestInc(n). =
+  !x = intToBinary(n).
+  !y = inc(x).
+  !z = binaryToInt(y).
+
+  If z == n + 1 then
+    Writeln["inc works for ", $(n)].
+  else
+    Writeln["***inc(", $(n), ") = ", $(z)].
+    Writeln["+++inc(", $(x), ") = ", $(y)].
+  %If
+%Define
+
+=======================================
+%%             TestDec(n)
+=======================================
+Define TestDec(n). =
+  !x = intToBinary(n).
+  !y = dec(x).
+  !z = binaryToInt(y).
+  
+  If z == max[n - 1, 0] then
+  Writeln["product works for ", $(n), " - ", $(1), " is ", $(z)].
+  else 
+  Writeln["***dec(", $(n), ") = ", $(z)].
+  Writeln["+++dec(", $(x), ") = ", $(y)].
+  %If
+%Define
+
+=======================================
+%%             TestSum(n, m)
+=======================================
+Define TestSum(n, m). =
+  !x = intToBinary(n).
+  !y = intToBinary(m).
+  !sum = sum(x, y).
+  !z = binaryToInt(sum).
+  
+  If z == n + m then
+ Writeln["product works for ", $(n), " + ", $(m), " is ", $(z)].
+  else 
+  Writeln["***sum(", $(n), ") = ", $(z)].
+  Writeln["+++sum(", $(x), ") = ", $(y)].
+  %If
+%Define
+
+=======================================
+%%            TestDiff(n, m)
+=======================================
+Define TestDiff(n, m). =
+  !x = intToBinary(n).
+  !y = intToBinary(m).
+  !diff = diff(x, y).
+  !z = binaryToInt(diff).
+  
+  If z == n - m then
+  Writeln["product works for ", $(n), " - ", $(m), " is ", $(z)].
+  else 
+  Writeln["***diff(", $(n), ") = ", $(z)].
+  Writeln["+++diff(", $(x), ") = ", $(y)].
+  %If
+%Define
+
+=======================================
+%%           TestProduct(n, m)
+=======================================
+Define TestProduct(n, m). =
+  !x = intToBinary(n).
+  !y = intToBinary(m).
+  !product = product(x, y).
+  !z = binaryToInt(product).
+  
+  If z == n * m then
+  Writeln["product works for ", $(n), " * ", $(m), " is ", $(z)].
+  else 
+  Writeln["***product(", $(n), ") = ", $(z)].
+  Writeln["+++product(", $(x), ") = ", $(y)].
+  %If
+%Define
+
+
+=======================================
+%%           TestCompareInts(n, m)
+=======================================
+
+Define TestCompareInts(n,m). =
+  !x = intToBinary(n).
+  !t = intToBinary(m).
+  !compareInts = compareInts(x,t).
+ 
+  Writeln[ $(n),$(compareInts), $(m) ].
+
+%Define
+
+Execute
+-------------------------------------
+%%TestInc
+-------------------------------------
+  TestInc(0).
+  TestInc(1).
+  TestInc(2).
+  TestInc(31).
+  TestInc(64).
+  
+-------------------------------------
+%%TestDec
+-------------------------------------  
+  TestDec(0).
+  TestDec(1).
+  TestDec(2).
+  TestDec(31).
+  TestDec(64). 
+  
+-------------------------------------
+%%TestSum
+------------------------------------- 
+  TestSum(1, 2).
+  TestSum(111, 1213).
+  TestSum(0, 0).
+  TestSum(31, 64).
+  
+-------------------------------------
+%%TestDiff
+------------------------------------- 
+  TestDiff(2, 1).
+  TestDiff(1213, 111).
+  TestDiff(0, 0).
+  TestDiff(64 ,31).
+  
+-------------------------------------
+%%TestProduct
+-------------------------------------
+  TestProduct(2, 1).
+  TestProduct(1213, 111).
+  TestProduct(0, 0).
+  TestProduct(64, 31).
+  TestProduct(1111, 192939).
+  
+-------------------------------------
+%%TestCompareInts
+-------------------------------------
+  TestCompareInts(1,1).
+  TestCompareInts(25,1).
+  TestCompareInts(2,10).
+  TestCompareInts(8,4).
+  TestCompareInts(10,12).
+  TestCompareInts(100,10).
+  TestCompareInts(24,1).
+  TestCompareInts(0,0).
+  
+
+%Execute
+
+%Package
