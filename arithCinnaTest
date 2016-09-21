@@ -1,4 +1,6 @@
-%% Tabs: 2
+%% Brian Raytick
+%% 09/21/2016
+%% Tabs: ***
 
 Package arithtest
 
@@ -40,6 +42,26 @@ Example
 
 %% Note: $(x) is x converted to a string.  It is similar
 %% to x.tostring() in Java.
+
+Define TestInc(n: Integer). =
+  !x = intToBinary(n).
+  !y = inc(x).
+  !z = binaryToInt(y).
+
+  If z == n + 1 then
+    Displayln "inc works for %(n)".
+  else
+    Displayln "***inc(%(n)) = %(z)".
+    Displayln "---inc(%(x)) = %(y)".
+  %If
+%Define
+
+Execute
+  TestInc(0).
+  TestInc(1).
+  TestInc(2).
+  TestInc(31).
+  TestInc(64). 
 
 =======================================
 %%             TestInc(n)
