@@ -275,13 +275,9 @@ Example product ([0,0,0,0,1], [1,0,1,1,0,1,0,1,1]) = [0,0,0,0,1,0,1,1,0,1,0,1,1]
 ===============================================================
 %%                    compareInts
 ===============================================================
+
 %%: compareInts(x,y) yields
-%%:    '<'  if x < y
-%%:    '='  if x = y
-%%:    '>'  if x > y
-%%: where x and y are binary numbers represented as
-%%: lists.  For example, compareInts([0,0,1,1], [0,1,0,1])
-%%: yields '>', since 12 > 10.
+%%:    '<'  if x < y or '='  if x = y or '>'  if x > y
 
 Define
   ----------------------------------------------
