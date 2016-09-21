@@ -221,7 +221,6 @@ Define
 %Define 
 
 Define diff x = normalize(diffn x). 
-
   
 Example diff([0,0,1], [1,1]) = [1].  
 Example diff([1,0,1], [1,1]) = [0,1].
