@@ -1,5 +1,6 @@
-
-%% Tabs: 2
+%% Name: Brian Raytick
+%% Date: 09/21/2016
+%% Tabs: ***
 
 Package arithmetic
 
@@ -9,7 +10,7 @@ Package arithmetic
 %% For example, list [1,1,0,0,1] stands for the binary number
 %% 10011, or 19 in decimal.
 %%
-%% A list is *normalized( if it does not end on 0.  All of the
+%% A list is *normalized if it does not end on 0.  All of the
 %% following functions produce normalized results, even if the
 %% parameter(s) are not normalized.
 
@@ -22,8 +23,8 @@ Abbrev Bit = Integer.
 Expect
   inc           : [Bit] -> [Bit]
 
-                %: inc(x) is x+1, where both x and the result are binary
-                %: numbers represented as lists.
+                %: inc(x) is x+1, where both x and the result are
+                %: binary numbers represented as lists.
                 %: For example inc([1,0,1,1]) = [0,1,1,1]
                 ;
 
@@ -32,7 +33,6 @@ Expect
                 %: dec(x) = max(0, x-1), where x and the result are
                 %: binary numbers represented as lists.
                 ;
-
 
   sum           :  ([Bit], [Bit]) -> [Bit]
 
@@ -65,7 +65,7 @@ Expect
                 %: where x and y are binary numbers represented as
                 %: lists.  For example, compareInts([0,0,1,1], [0,1,0,1])
                 %: yields '>', since 12 > 10.
-
+  
 %Expect
 
 ================================================================
@@ -103,7 +103,6 @@ Define inc x = normalize(incn x).
 Example inc [1,1,0,1,1,0,0] = [0,0,1,1,1].
 Example inc [1] = [0,1].
 Example inc [1,0,0] = [0,1].
-
 
 ===============================================================
 %%                    dec
