@@ -327,5 +327,4 @@ Example compareInts ([1,1,1,1,1], [0,0,0,0,0,1]) = '<'.
 Example compareInts ([1,1,1,1,1], [1,1]) = '>'.
 Example compareInts ([1,0,1,0,1], [1,0,1,0,1]) = '='.
 
-
 %Package
