@@ -63,21 +63,8 @@ Execute
   TestInc(31).
   TestInc(64). 
 
-=======================================
-%%             TestInc(n)
-=======================================
-Define TestInc(n). =
-  !x = intToBinary(n).
-  !y = inc(x).
-  !z = binaryToInt(y).
-
-  If z == n + 1 then
-    Writeln["inc works for ", $(n)].
-  else
-    Writeln["***inc(", $(n), ") = ", $(z)].
     Writeln["+++inc(", $(x), ") = ", $(y)].
-  %If
-%Define
+    Displayln "---inc(%(x)) = %(y)".
 
 =======================================
 %%             TestDec(n)
@@ -88,10 +75,10 @@ Define TestDec(n). =
   !z = binaryToInt(y).
   
   If z == max[n - 1, 0] then
-  Writeln["product works for ", $(n), " - ", $(1), " is ", $(z)].
+  Displayln "product works for %(n), " - %(1), " is %(z)".
   else 
-  Writeln["***dec(", $(n), ") = ", $(z)].
-  Writeln["+++dec(", $(x), ") = ", $(y)].
+  Displayln "***dec(%(n)) = %(z)".
+  Displayln "+++dec(%(x)) = %(y)".
   %If
 %Define
 
@@ -107,8 +94,8 @@ Define TestSum(n, m). =
   If z == n + m then
  Writeln["product works for ", $(n), " + ", $(m), " is ", $(z)].
   else 
-  Writeln["***sum(", $(n), ") = ", $(z)].
-  Writeln["+++sum(", $(x), ") = ", $(y)].
+  Displayln "***sum(%(n)) = %(z)".
+  Displayln "+++sum(%(x)) = %(y)".
   %If
 %Define
 
@@ -124,8 +111,8 @@ Define TestDiff(n, m). =
   If z == n - m then
   Writeln["product works for ", $(n), " - ", $(m), " is ", $(z)].
   else 
-  Writeln["***diff(", $(n), ") = ", $(z)].
-  Writeln["+++diff(", $(x), ") = ", $(y)].
+  Displayln "***diff(%(n)) = %(z)".
+  Displayln "+++diff(%(x)) = %(y)".
   %If
 %Define
 
@@ -141,8 +128,8 @@ Define TestProduct(n, m). =
   If z == n * m then
   Writeln["product works for ", $(n), " * ", $(m), " is ", $(z)].
   else 
-  Writeln["***product(", $(n), ") = ", $(z)].
-  Writeln["+++product(", $(x), ") = ", $(y)].
+  Displayln "***product(%(n)) = %(z)".
+  Displayln "+++product(%(x)) = %(y)".
   %If
 %Define
 
@@ -156,7 +143,7 @@ Define TestCompareInts(n,m). =
   !t = intToBinary(m).
   !compareInts = compareInts(x,t).
  
-  Writeln[ $(n),$(compareInts), $(m) ].
+  Displayln " %(n),%(compareInts), %(m) ".
 
 %Define
 
