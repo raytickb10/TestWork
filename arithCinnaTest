@@ -63,12 +63,6 @@ Execute
   TestInc(31).
   TestInc(64). 
 
-    Writeln["+++inc(", $(x), ") = ", $(y)].
-    Displayln "---inc(%(x)) = %(y)".
-
-=======================================
-%%             TestDec(n)
-=======================================
 Define TestDec(n). =
   !x = intToBinary(n).
   !y = dec(x).
@@ -82,9 +76,13 @@ Define TestDec(n). =
   %If
 %Define
 
-=======================================
-%%             TestSum(n, m)
-=======================================
+Execute
+  TestDec(0).
+  TestDec(1).
+  TestDec(2).
+  TestDec(31).
+  TestDec(64). 
+
 Define TestSum(n, m). =
   !x = intToBinary(n).
   !y = intToBinary(m).
@@ -99,9 +97,12 @@ Define TestSum(n, m). =
   %If
 %Define
 
-=======================================
-%%            TestDiff(n, m)
-=======================================
+Execute
+  TestSum(1, 2).
+  TestSum(111, 1213).
+  TestSum(0, 0).
+  TestSum(31, 64).
+
 Define TestDiff(n, m). =
   !x = intToBinary(n).
   !y = intToBinary(m).
@@ -116,9 +117,12 @@ Define TestDiff(n, m). =
   %If
 %Define
 
-=======================================
-%%           TestProduct(n, m)
-=======================================
+Execute
+  TestDiff(2, 1).
+  TestDiff(1213, 111).
+  TestDiff(0, 0).
+  TestDiff(64 ,31).
+
 Define TestProduct(n, m). =
   !x = intToBinary(n).
   !y = intToBinary(m).
@@ -133,10 +137,12 @@ Define TestProduct(n, m). =
   %If
 %Define
 
-
-=======================================
-%%           TestCompareInts(n, m)
-=======================================
+Execute
+  TestProduct(2, 1).
+  TestProduct(1213, 111).
+  TestProduct(0, 0).
+  TestProduct(64, 31).
+  TestProduct(1111, 192939).
 
 Define TestCompareInts(n,m). =
   !x = intToBinary(n).
@@ -148,52 +154,6 @@ Define TestCompareInts(n,m). =
 %Define
 
 Execute
--------------------------------------
-%%TestInc
--------------------------------------
-  TestInc(0).
-  TestInc(1).
-  TestInc(2).
-  TestInc(31).
-  TestInc(64).
-  
--------------------------------------
-%%TestDec
--------------------------------------  
-  TestDec(0).
-  TestDec(1).
-  TestDec(2).
-  TestDec(31).
-  TestDec(64). 
-  
--------------------------------------
-%%TestSum
-------------------------------------- 
-  TestSum(1, 2).
-  TestSum(111, 1213).
-  TestSum(0, 0).
-  TestSum(31, 64).
-  
--------------------------------------
-%%TestDiff
-------------------------------------- 
-  TestDiff(2, 1).
-  TestDiff(1213, 111).
-  TestDiff(0, 0).
-  TestDiff(64 ,31).
-  
--------------------------------------
-%%TestProduct
--------------------------------------
-  TestProduct(2, 1).
-  TestProduct(1213, 111).
-  TestProduct(0, 0).
-  TestProduct(64, 31).
-  TestProduct(1111, 192939).
-  
--------------------------------------
-%%TestCompareInts
--------------------------------------
   TestCompareInts(1,1).
   TestCompareInts(25,1).
   TestCompareInts(2,10).
@@ -202,7 +162,6 @@ Execute
   TestCompareInts(100,10).
   TestCompareInts(24,1).
   TestCompareInts(0,0).
-  
 
 %Execute
 
