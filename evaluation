@@ -1,52 +1,30 @@
+;Brian Raytick
+;Assignment 3
 
-;Assignment 4
-;tabs: no tabs
-
-;================================================
-;              (evaluate E env)
-;================================================
-; evaluate expression E based on the environment
-; variable env.
-;================================================
 (define (evaluate E env)
   (cond
     ((number? E) E)
     ((symbol? E)            (evaluateVar E env))
-    ((eqv? (car E) 'plus)   (apply + (eval-params (cdr E) env)))
-    ((eqv? (car E) 'minus)  (apply - (eval-params (cdr E) env)))
-    ((eqv? (car E) 'times)  (apply * (eval-params (cdr E) env)))
-    ((eqv? (car E) 'divide) (apply / (eval-params (cdr E) env)))
+    ((eqv? (car E) 'plus)   (apply + (eval-param (cdr E) env)))
+    ((eqv? (car E) 'minus)  (apply - (eval-param (cdr E) env)))
+    ((eqv? (car E) 'times)  (apply * (eval-param (cdr E) env)))
+    ((eqv? (car E) 'divide) (apply / (eval-param (cdr E) env)))
     ((eqv? (car E) 'if)     (if (= (evaluate (cadr E) env) 0)
                               (evaluate (cadddr E) env) 
                               (evaluate (caddr E) env)
-                              
+                         
                               )
                             )
     ((eqv? (car E) 'let)    (evaluateLet E env))
     (else '()) ; confused - return ()
    )
 )
-;================================================
-;              (eval-params E env)
-;================================================ 
-; This function allows evaluate to work with an
-; arbitrary number of parameters.
-;===============================================
-(define (eval-params E env)
+
+(define (eval-param E env)
   (if (null? E) '()
-      (cons (evaluate (car E) env) (eval-params (cdr E) env))
+      (cons (evaluate (car E) env) (eval-param (cdr E) env))
    )
 )
-;===============================================
-;             (evaluateVar E env)
-;===============================================
-; evaluateVar handle the evaluation of variables.
-; variables can either be numbers or promises.
-; env holds pairs of variables and their values.
-; when a promise is evaluated, the value of that
-; variable in env is replaced by the result of 
-; the evaluation.
-;==============================================
 
 (define (evaluateVar E env)
   (let ((promise (assoc E env)))
@@ -61,14 +39,7 @@
     )
   )
 )
-;==============================================
-;           (evaluateLet E var)
-;==============================================
-; handle expressions of the form (let (x v) e)
-; which indicates that variable x should be bound
-; to the value of expression v, and that e
-; should be evaluated with that binding. 
-;============================================
+
 (define (evaluateLet E env)
   (let* ((x (caadr E))
         (v (cadadr E))
@@ -80,25 +51,14 @@
    )
 )
 
-
-; if(A is "0 or 0.0" the anwer  C else B.
-;(define y (list (- 2 2) (+ 1 8)(/ 5 2)))
-;(if (= (car y) 0)
-;    (caddr y)
-;   (cadr y))
-
 (evaluate '(plus 3 5 4) '())
 (evaluate '(minus 5 2 1) '())
 (evaluate '(divide 10 5) '())
-(evaluate '(plus 2 3)'())
+(evaluate '(times 10 5) '())
 (evaluate '(plus (times 2 3) (times 4 2)) '()) 
 (evaluate '(plus (times 2 3) (minus 4 2)) '())
 (evaluate '(if (minus 2 2) (plus 1 8) (divide 5 2)) '())
 (evaluate '(if (plus 1 2) (minus 3 5) (plus 5 6)) '())
-(evaluate 'x '((y 2) (x 5)))
-(evaluate '(times x x) '((x ((plus y x) ((x 2)(y 3)))))) 
 (evaluate '(times x 3) '((x 5) (y 2))) 
 (evaluate '(times x 3) '((x 5) (x 2)))
-(evaluate '(let (z 15) (plus z z)) '( ))
-(evaluate '(let (r (plus 2 5)) (times r 2)) '( ))
 (evaluate '(let (s 5) (let (t (plus s s)) (times s (plus t 3)))) '( ))
