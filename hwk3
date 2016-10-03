@@ -64,16 +64,16 @@ Values (569730, 'Spring13', 'Database Design', CSCI3500, 3, 'Computer Science', 
        (254675, 'Fall14', 'Database Management Systems', CSCI3700, 3, 'Computer Science', '1:30', 'Austin 208', 50)
 
 INSERT INTO Instructor(name, department, office, title)
-Values ('Masayuki Tanaka', 'Computer Science', 'SCITECH 305', title),
-       ('James Fitzgerald', 'Math', 'AUSTIN 307', title),
-       ('Thomas Johnson', 'Computer Science', 'SCITECH 303', title)
+Values ('Masayuki Tanaka', 'Computer Science', 'SCITECH 305', 'Doctor'),
+       ('James Fitzgerald', 'Math', 'AUSTIN 307', 'Professor'),
+       ('Thomas Johnson', 'Computer Science', 'SCITECH 303', 'Doctor')
 
 INSERT INTO Enrolls(student_id, schedule_num, semester, grade)
-Values (student_id, schedule_num, semester, grade),
-       (student_id, schedule_num, semester, grade),
-       (student_id, schedule_num, semester, grade),
-       (student_id, schedule_num, semester, grade),
-       (student_id, schedule_num, semester, grade)
+Values ('B00369122', 569730, 'Spring13', 'A'),
+       ('B00567132', 569730, 'Spring13', 'B'),
+       ('B00259156', 123654, 'Spring13', 'C+'),
+       ('B00369122', 123654, 'Spring13', 'B-'),
+       ('B00567132', 254675, 'Fall14', 'C-')
 
 INSERT INTO Teaches(name, schedule_num, semester)
 Values (name, schedule_num, semester),
