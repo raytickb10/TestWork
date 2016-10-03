@@ -54,9 +54,9 @@ CREATE TABLE Teaches
 );
 
 INSERT INTO Student(student_id, student_name, major, gpa)
-Values ('B00369122', 'John Smith', 'Computer Science', 3.1),
+Values ('B00369122', 'John Smith', 'Computer Science', 3.8),
        ('B00567132', 'Michael Jones', 'Math', 2.8),
-       ('B00259156', 'Lindsay Bluth', 'Engineering', 3.5)
+       ('B00259156', 'Lindsay Bluth', 'Engineering', 3.6)
 
 INSERT INTO Class(schedule_num, semester, course_name, course_number, credit, department, meeting_time, meeting_place, class_size_limit)
 Values (569730, 'Spring13', 'Database Design', CSCI3500, 3, 'Computer Science', '12:00', 'Brewster D200', 30),
