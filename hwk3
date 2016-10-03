@@ -83,12 +83,13 @@ Values ('Masayuki Tanaka', 569730, 'Spring13'),
        ('Thomas Johnson', 254675, 'Fall14')
 
 SELECT course_name, course_number, semester
-FROM Student
+FROM Class
 WHERE course_name CONTAINS 'Database'
 
 SELECT major, student_name
 FROM Student
 WHERE course_number = CSCI3700 AND semester = Spring13
 
-SELECT COUNT()
+SELECT COUNT(major)
+FROM Student
 WHERE gpa > 3.5
