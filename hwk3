@@ -1,0 +1,29 @@
+DROP TABLE Student, Class, Instructor, Enrolls, Teaches;
+
+CREATE TABLE Student
+(
+  student_id varchar(255) NOT NULL PRIMARY KEY,
+  student_name varchar(255),
+  major varchar(255),
+  gpa double,
+)
+
+CREATE TABLE Class
+(
+  
+)
+
+CREATE TABLE Instructor
+(
+  
+)
+
+CREATE TABLE Enrolls
+(
+  
+)
+
+CREATE TABLE Teaches
+(
+  
+)
