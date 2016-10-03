@@ -9,7 +9,7 @@ CREATE TABLE Student
   student_id varchar(255) NOT NULL PRIMARY KEY,
   student_name varchar(255),
   major varchar(255),
-  gpa double,
+  gpa double
 );
 
 CREATE TABLE Class
@@ -23,7 +23,7 @@ CREATE TABLE Class
   meeting_time varchar(255),
   meeting_place varchar(255),
   class_size_limit int,
-  CONSTRAINT pk_schedule PRIMARY KEY(schedule_num, semester),
+  CONSTRAINT pk_schedule PRIMARY KEY(schedule_num, semester)
 );
 
 CREATE TABLE Instructor
@@ -31,7 +31,7 @@ CREATE TABLE Instructor
   name varchar(255) NOT NULL PRIMARY KEY,
   department varchar(255),
   office varchar(255),
-  title varchar(255),
+  title varchar(255)
 );
 
 CREATE TABLE Enrolls
@@ -41,7 +41,7 @@ CREATE TABLE Enrolls
   semester varchar(255),
   grade varchar(255),
   CONSTRAINT fk_perClass FOREIGN KEY(schedule_num, semester),
-  REFERENCES Class(schedule_num, semester),
+  REFERENCES Class(schedule_num, semester)
 );
 
 CREATE TABLE Teaches
@@ -50,5 +50,5 @@ CREATE TABLE Teaches
   schedule_num int,
   semester varchar(255),
   CONSTRAINT fk_PerClass FOREIGN KEY(schedule_num, semester),
-  REFERENCES Class(schedule_num, semester),
+  REFERENCES Class(schedule_num, semester)
 );
