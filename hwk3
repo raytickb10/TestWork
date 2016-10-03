@@ -90,5 +90,5 @@ SELECT major, student_name
 FROM Student
 WHERE course_number = CSCI3700 AND semester = Spring13
 
-SELECT Count()
+SELECT COUNT()
 WHERE gpa > 3.5
