@@ -54,16 +54,30 @@ CREATE TABLE Teaches
 );
 
 INSERT INTO Student(student_id, student_name, major, gpa)
-Values ()
+Values (student_id, student_name, major, gpa),
+       (student_id, student_name, major, gpa),
+       (student_id, student_name, major, gpa)
 
 INSERT INTO Class(schedule_num, semester, course_name, course_number, credit, department, meeting_time, meeting_place, class_size_limit)
-Values ()
+Values (schedule_num, semester, course_name, course_number, credit, department, meeting_time, meeting_place, class_size_limit),
+       (schedule_num, semester, course_name, course_number, credit, department, meeting_time, meeting_place, class_size_limit),
+       (schedule_num, semester, course_name, course_number, credit, department, meeting_time, meeting_place, class_size_limit)
 
 INSERT INTO Instructor(name, department, office, title)
-Values ()
+Values (name, department, office, title),
+       (name, department, office, title),
+       (name, department, office, title)
 
 INSERT INTO Enrolls(student_id, schedule_num, semester, grade)
-Values ()
+Values (student_id, schedule_num, semester, grade),
+       (student_id, schedule_num, semester, grade),
+       (student_id, schedule_num, semester, grade),
+       (student_id, schedule_num, semester, grade),
+       (student_id, schedule_num, semester, grade)
 
 INSERT INTO Teaches(name, schedule_num, semester)
-Values ()
+Values (name, schedule_num, semester),
+       (name, schedule_num, semester),
+       (name, schedule_num, semester),
+       (name, schedule_num, semester),
+       (name, schedule_num, semester)
