@@ -56,17 +56,17 @@ CREATE TABLE Teaches
 INSERT INTO Student(student_id, student_name, major, gpa)
 Values ('B00369122', 'John Smith', 'Computer Science', 3.1),
        ('B00567132', 'Michael Jones', 'Math', 2.8),
-       ('B00259156', 'Lindsay Bluth', 'English', 3.5)
+       ('B00259156', 'Lindsay Bluth', 'Engineering', 3.5)
 
 INSERT INTO Class(schedule_num, semester, course_name, course_number, credit, department, meeting_time, meeting_place, class_size_limit)
 Values (569730, 'Spring13', 'Database Design', CSCI3500, 3, 'Computer Science', '12:00', 'Brewster D200', 30),
        (123654, 'Spring13', 'Organization of Programming Languages', CSCI3675, 3, 'Computer Science', '9:00', 'Austin 306', 35),
-       (254675, 'Fall14', 'Database Management Systems', CSCI3700, 3, 'Computer Science', '1:30', 'Austin 212', 50)
+       (254675, 'Fall14', 'Database Management Systems', CSCI3700, 3, 'Computer Science', '1:30', 'Austin 208', 50)
 
 INSERT INTO Instructor(name, department, office, title)
-Values (name, department, office, title),
-       (name, department, office, title),
-       (name, department, office, title)
+Values ('Masayuki Tanaka', 'Computer Science', 'SCITECH 305', title),
+       ('James Fitzgerald', 'Math', 'AUSTIN 307', title),
+       ('Thomas Johnson', 'Computer Science', 'SCITECH 303', title)
 
 INSERT INTO Enrolls(student_id, schedule_num, semester, grade)
 Values (student_id, schedule_num, semester, grade),
