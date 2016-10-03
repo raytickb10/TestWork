@@ -10,7 +10,7 @@ CREATE TABLE Student
   student_name varchar(255),
   major varchar(255),
   gpa double,
-)
+);
 
 CREATE TABLE Class
 (
@@ -23,8 +23,8 @@ CREATE TABLE Class
   meeting_time varchar(255),
   meeting_place varchar(255),
   class_size_limit int,
-  CONSTRAINT pk_schedule PRIMARY KEY(schedule_num, semester)
-)
+  CONSTRAINT pk_schedule PRIMARY KEY(schedule_num, semester),
+);
 
 CREATE TABLE Instructor
 (
@@ -32,23 +32,23 @@ CREATE TABLE Instructor
   department varchar(255),
   office varchar(255),
   title varchar(255),
-)
+);
 
 CREATE TABLE Enrolls
 (
-  student_id varchar(255) FOREIGN KEY REFERENCES Student(student_id)
+  student_id varchar(255) FOREIGN KEY REFERENCES Student(student_id),
   schedule_num int,
   semester varchar(255),
   grade varchar(255),
-  CONSTRAINT fk_perClass FOREIGN KEY(schedule_num, semester)
-  REFERENCES Class(schedule_num, semester)
-)
+  CONSTRAINT fk_perClass FOREIGN KEY(schedule_num, semester),
+  REFERENCES Class(schedule_num, semester),
+);
 
 CREATE TABLE Teaches
 (
-  name varchar(255) FOREIGN KEY REFERENCES Instructor(name)
+  name varchar(255) FOREIGN KEY REFERENCES Instructor(name),
   schedule_num int,
   semester varchar(255),
-  CONSTRAINT fk_PerClass FOREIGN KEY(schedule_num, semester) 
-  REFERENCES Class(schedule_num, semester)
-)
+  CONSTRAINT fk_PerClass FOREIGN KEY(schedule_num, semester),
+  REFERENCES Class(schedule_num, semester),
+);
