@@ -81,3 +81,14 @@ Values ('Masayuki Tanaka', 569730, 'Spring13'),
        ('James Fitzgerald', 123654, 'Spring13'),
        ('James Fitzgerald', 123654, 'Spring13'),
        ('Thomas Johnson', 254675, 'Fall14')
+
+SELECT course_name, course_number, semester
+FROM Student
+WHERE course_name CONTAINS 'Database'
+
+SELECT major, student_name
+FROM Student
+WHERE course_number = CSCI3700 AND semester = Spring13
+
+SELECT Count()
+WHERE gpa > 3.5
