@@ -52,3 +52,18 @@ CREATE TABLE Teaches
   CONSTRAINT fk_PerClass FOREIGN KEY(schedule_num, semester),
   REFERENCES Class(schedule_num, semester)
 );
+
+INSERT INTO Student(student_id, student_name, major, gpa)
+Values ()
+
+INSERT INTO Class(schedule_num, semester, course_name, course_number, credit, department, meeting_time, meeting_place, class_size_limit)
+Values ()
+
+INSERT INTO Instructor(name, department, office, title)
+Values ()
+
+INSERT INTO Enrolls(student_id, schedule_num, semester, grade)
+Values ()
+
+INSERT INTO Teaches(name, schedule_num, semester)
+Values ()
