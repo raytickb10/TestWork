@@ -10,12 +10,24 @@ CREATE TABLE Student
 
 CREATE TABLE Class
 (
-  
+  schedule_num int NOT NULL,
+  semester varchar(255) NOT NULL,
+  course_name varchar(255),
+  course_number varchar(255),
+  credit int,
+  department varchar(255),
+  meeting_time varchar(255),
+  meeting_place varchar(255),
+  class_size_limit int,
+  CONSTRAINT pk_schedule PRIMARY KEY(schedule_num, semester)
 )
 
 CREATE TABLE Instructor
 (
-  
+  name varchar(255) NOT NULL PRIMARY KEY,
+  department varchar(255),
+  office varchar(255),
+  title varchar(255),
 )
 
 CREATE TABLE Enrolls
