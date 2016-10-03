@@ -2,7 +2,11 @@
 -- CSCI 3700
 -- Homework 3
 
-DROP TABLE Student, Class, Instructor, Enrolls, Teaches;
+DROP TABLE Student;
+DROP TABLE Class;
+DROP TABLE Instructor;
+DROP TABLE Enrolls;
+DROP TABLE Teaches;
 
 CREATE TABLE Student
 (
