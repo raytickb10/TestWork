@@ -76,8 +76,8 @@ Values ('B00369122', 569730, 'Spring13', 'A'),
        ('B00567132', 254675, 'Fall14', 'C-')
 
 INSERT INTO Teaches(name, schedule_num, semester)
-Values (name, schedule_num, semester),
-       (name, schedule_num, semester),
-       (name, schedule_num, semester),
-       (name, schedule_num, semester),
-       (name, schedule_num, semester)
+Values ('Masayuki Tanaka', 569730, 'Spring13'),
+       ('Masayuki Tanaka', 569730, 'Spring13'),
+       ('James Fitzgerald', 123654, 'Spring13'),
+       ('James Fitzgerald', 123654, 'Spring13'),
+       ('Thomas Johnson', 254675, 'Fall14')
