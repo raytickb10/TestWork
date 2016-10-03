@@ -32,7 +32,12 @@ CREATE TABLE Instructor
 
 CREATE TABLE Enrolls
 (
-  
+  student_id varchar(255) FOREIGN KEY REFERENCES Student(student_id)
+  schedule_num int,
+  semester varchar(255),
+  grade varchar(255),
+  CONSTRAINT fk_perClass FOREIGN KEY(schedule_num, semester)
+  REFERENCES Class(schedule_num, semester)
 )
 
 CREATE TABLE Teaches
