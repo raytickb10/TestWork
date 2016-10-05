@@ -1,3 +1,7 @@
+-- Brian Raytick
+-- CSCI 3700
+-- Homework 3
+
 DROP TABLE Student;
 DROP TABLE Class;
 DROP TABLE Instructor;
@@ -6,92 +10,124 @@ DROP TABLE Teaches;
 
 CREATE TABLE Student
 (
-  student_id varchar(255) NOT NULL PRIMARY KEY,
-  student_name varchar(255),
-  major varchar(255),
+  student_id varchar(50) NOT NULL PRIMARY KEY,
+  student_name varchar(50),
+  major varchar(50),
   gpa double
 );
 
 CREATE TABLE Class
 (
-  schedule_num int NOT NULL,
-  semester varchar(255) NOT NULL,
-  course_name varchar(255),
-  course_number varchar(255),
-  credit int,
-  department varchar(255),
-  meeting_time varchar(255),
-  meeting_place varchar(255),
-  class_size_limit int,
+  schedule_num number NOT NULL,
+  semester varchar(10) NOT NULL,
+  course_name varchar(50),
+  course_number varchar(50),
+  credit number,
+  department varchar(50),
+  meeting_time varchar(50),
+  meeting_place varchar(50),
+  class_size_limit number,
   CONSTRAINT pk_schedule PRIMARY KEY(schedule_num, semester)
 );
 
 CREATE TABLE Instructor
 (
-  name varchar(255) NOT NULL PRIMARY KEY,
-  department varchar(255),
-  office varchar(255),
-  title varchar(255)
+  name varchar(50) NOT NULL PRIMARY KEY,
+  department varchar(50),
+  office varchar(50),
+  title varchar(50)
 );
 
 CREATE TABLE Enrolls
 (
-  student_id varchar(255) FOREIGN KEY REFERENCES Student(student_id),
-  schedule_num int,
-  semester varchar(255),
-  grade varchar(255),
+  student_id varchar(50) FOREIGN KEY REFERENCES Student(student_id),
+  schedule_num number,
+  semester varchar(50),
+  grade varchar(2),
   CONSTRAINT fk_perClass FOREIGN KEY(schedule_num, semester),
   REFERENCES Class(schedule_num, semester)
 );
 
 CREATE TABLE Teaches
 (
-  name varchar(255) FOREIGN KEY REFERENCES Instructor(name),
-  schedule_num int,
-  semester varchar(255),
+  name varchar(50) FOREIGN KEY REFERENCES Instructor(name),
+  schedule_num number,
+  semester varchar(10),
   CONSTRAINT fk_PerClass FOREIGN KEY(schedule_num, semester),
   REFERENCES Class(schedule_num, semester)
 );
 
-INSERT INTO Student(student_id, student_name, major, gpa)
-Values ('B00369122', 'John Smith', 'Computer Science', 3.8),
-       ('B00567132', 'Michael Jones', 'Math', 2.8),
-       ('B00259156', 'Lindsay Bluth', 'Engineering', 3.6);
+INSERT ALL 
+  INTO Student(student_id, student_name, major, gpa)
+   VALUES ('B00369122', 'John Smith', 'Computer Science', 3.8)
+  INTO Student(student_id, student_name, major, gpa)
+   VALUES ('B00567132', 'Michael Jones', 'Math', 2.8)
+  INTO Student(student_id, student_name, major, gpa)
+   VALUES ('B00259156', 'Lindsay Bluth', 'Engineering', 3.6)
+SELECT * FROM dual;
 
-INSERT INTO Class(schedule_num, semester, course_name, course_number, credit, department, meeting_time, meeting_place, class_size_limit)
-Values (569730, 'Spring13', 'Database Design', CSCI3500, 3, 'Computer Science', '12:00', 'Brewster D200', 30),
-       (123654, 'Spring13', 'Organization of Programming Languages', CSCI3675, 3, 'Computer Science', '9:00', 'Austin 306', 35),
-       (254675, 'Fall14', 'Database Management Systems', CSCI3700, 3, 'Computer Science', '1:30', 'Austin 208', 50);
+INSERT ALL 
+  INTO Class(schedule_num, semester, course_name, course_number, credit, department, meeting_time, meeting_place, class_size_limit)
+   VALUES (569730, 'Spring13', 'Database Design', CSCI3500, 3, 'Computer Science', '12:00', 'Brewster D200', 30)
+  INTO Class(schedule_num, semester, course_name, course_number, credit, department, meeting_time, meeting_place, class_size_limit)
+       (123654, 'Spring13', 'Organization of Programming Languages', CSCI3675, 3, 'Computer Science', '9:00', 'Austin 306', 35)
+  INTO Class(schedule_num, semester, course_name, course_number, credit, department, meeting_time, meeting_place, class_size_limit)
+       (254675, 'Fall14', 'Database Management Systems', CSCI3700, 3, 'Computer Science', '1:30', 'Austin 208', 50)
+SELECT * FROM dual;
 
-INSERT INTO Instructor(name, department, office, title)
-Values ('Masayuki Tanaka', 'Computer Science', 'SCITECH 305', 'Doctor'),
-       ('James Fitzgerald', 'Math', 'AUSTIN 307', 'Professor'),
-       ('Thomas Johnson', 'Computer Science', 'SCITECH 303', 'Doctor');
+INSERT ALL
+  INTO Instructor(name, department, office, title)
+   VALUES ('Masayuki Tanaka', 'Computer Science', 'SCITECH 305', 'Doctor')
+  INTO Instructor(name, department, office, title)
+   VALUES ('James Fitzgerald', 'Math', 'AUSTIN 307', 'Professor')
+  INTO Instructor(name, department, office, title)
+   VALUES ('Thomas Johnson', 'Computer Science', 'SCITECH 303', 'Doctor')
+SELECT * FROM dual;
 
-INSERT INTO Enrolls(student_id, schedule_num, semester, grade)
-Values ('B00369122', 569730, 'Spring13', 'A'),
-       ('B00567132', 569730, 'Spring13', 'B'),
-       ('B00259156', 123654, 'Spring13', 'C+'),
-       ('B00369122', 123654, 'Spring13', 'B-'),
-       ('B00567132', 254675, 'Fall14', 'C-');
+INSERT ALL
+  INTO Enrolls(student_id, schedule_num, semester, grade)
+   VALUES ('B00369122', 569730, 'Spring13', 'A')
+  INTO Enrolls(student_id, schedule_num, semester, grade)
+   VALUES ('B00567132', 569730, 'Spring13', 'B')
+  INTO Enrolls(student_id, schedule_num, semester, grade)
+   VALUES ('B00259156', 123654, 'Spring13', 'C+')
+  INTO Enrolls(student_id, schedule_num, semester, grade)
+   VALUES ('B00369122', 123654, 'Spring13', 'B-')
+  INTO Enrolls(student_id, schedule_num, semester, grade)
+   VALUES ('B00567132', 254675, 'Fall14', 'C-')
+SELECT * FROM dual;
 
-INSERT INTO Teaches(name, schedule_num, semester)
-Values ('Masayuki Tanaka', 569730, 'Spring13'),
-       ('Masayuki Tanaka', 569730, 'Spring13'),
-       ('James Fitzgerald', 123654, 'Spring13'),
-       ('James Fitzgerald', 123654, 'Spring13'),
-       ('Thomas Johnson', 254675, 'Fall14');
+INSERT ALL
+  INTO Teaches(name, schedule_num, semester)
+   VALUES ('Masayuki Tanaka', 569730, 'Spring13')
+  INTO Teaches(name, schedule_num, semester)
+   VALUES ('Masayuki Tanaka', 569730, 'Spring13')
+  INTO Teaches(name, schedule_num, semester)
+   VALUES ('James Fitzgerald', 123654, 'Spring13')
+  INTO Teaches(name, schedule_num, semester)
+   VALUES ('James Fitzgerald', 123654, 'Spring13')
+  INTO Teaches(name, schedule_num, semester)
+   VALUES ('Thomas Johnson', 254675, 'Fall14')
+SELECT * FROM dual;
+
+PROMPT Answer for Question 3;
 
 SELECT course_name, course_number, semester
   FROM Class
-  WHERE INSTR(course_name,'Database');
+  WHERE INSTR(course_name, 'Database') > 0;
+
+PROMPT Answer for Question 4;
 
 SELECT major, student_name
   FROM Student
-  WHERE course_number = CSCI3700 AND semester = Spring13;
+  WHERE course_number = 'CSCI3700' AND semester = 'Spring13';
 
-SELECT COUNT(major)
+PROMPT Answer for Question 5;
+
+SELECT major, COUNT(*)
+  AS gpa_count
   FROM Student
-WHERE gpa > 3.5;
+  WHERE gpa > 3.5
+  GROUP BY major;
 
 commit;
