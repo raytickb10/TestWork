@@ -13,7 +13,7 @@ CREATE TABLE Student
   student_id varchar(50) NOT NULL PRIMARY KEY,
   student_name varchar(50),
   major varchar(50),
-  gpa double
+  gpa number
 );
 
 CREATE TABLE Class
@@ -40,22 +40,26 @@ CREATE TABLE Instructor
 
 CREATE TABLE Enrolls
 (
-  student_id varchar(50) FOREIGN KEY REFERENCES Student(student_id),
-  schedule_num number,
-  semester varchar(50),
-  grade varchar(2),
-  CONSTRAINT fk_perClass FOREIGN KEY(schedule_num, semester),
-  REFERENCES Class(schedule_num, semester)
+  student_id varchar(50) NOT NULL,
+  schedule_num number NOT NULL,
+  semester varchar(50) NOT NULL,
+  grade varchar(2)
 );
 
 CREATE TABLE Teaches
 (
-  name varchar(50) FOREIGN KEY REFERENCES Instructor(name),
-  schedule_num number,
-  semester varchar(10),
-  CONSTRAINT fk_PerClass FOREIGN KEY(schedule_num, semester),
-  REFERENCES Class(schedule_num, semester)
+  name varchar(50) NOT NULL,
+  schedule_num number NOT NULL,
+  semester varchar(10) NOT NULL
 );
+
+ALTER TABLE Enrolls ADD CONSTRAINT Enrolls_fk     
+  CONSTRAINT fk_perClass FOREIGN KEY(student_id, schedule_num, semester)
+  REFERENCES Class(schedule_num, semester), Student(student_id);
+
+ALTER TABLE Teaches ADD CONSTRAINT Teaches_fk
+  CONSTRAINT fk_PerClass FOREIGN KEY(name, schedule_num, semester)
+  REFERENCES Class(schedule_num, semester), Instructor(name);
 
 INSERT ALL 
   INTO Student(student_id, student_name, major, gpa)
@@ -68,11 +72,11 @@ SELECT * FROM dual;
 
 INSERT ALL 
   INTO Class(schedule_num, semester, course_name, course_number, credit, department, meeting_time, meeting_place, class_size_limit)
-   VALUES (569730, 'Spring13', 'Database Design', CSCI3500, 3, 'Computer Science', '12:00', 'Brewster D200', 30)
+   VALUES (569730, 'FALL14', 'Database Design', 'CSCI3500', 3, 'Computer Science', '12:00', 'Brewster D200', 30)
   INTO Class(schedule_num, semester, course_name, course_number, credit, department, meeting_time, meeting_place, class_size_limit)
-       (123654, 'Spring13', 'Organization of Programming Languages', CSCI3675, 3, 'Computer Science', '9:00', 'Austin 306', 35)
+   VALUES (123654, 'SPRING13', 'Organization of Programming Languages', 'CSCI3675', 3, 'Computer Science', '9:00', 'Austin 306', 35)
   INTO Class(schedule_num, semester, course_name, course_number, credit, department, meeting_time, meeting_place, class_size_limit)
-       (254675, 'Fall14', 'Database Management Systems', CSCI3700, 3, 'Computer Science', '1:30', 'Austin 208', 50)
+   VALUES (254675, 'SPRING13', 'Database Management Systems', 'CSCI3700', 3, 'Computer Science', '1:30', 'Austin 208', 50)
 SELECT * FROM dual;
 
 INSERT ALL
@@ -118,9 +122,13 @@ SELECT course_name, course_number, semester
 
 PROMPT Answer for Question 4;
 
-SELECT major, student_name
+SELECT Student.major, Student.student_name
   FROM Student
-  WHERE course_number = 'CSCI3700' AND semester = 'Spring13';
+  Full OUTER JOIN Enrolls
+    ON Student.student_id = Enrolls.student_id 
+  Full OUTER JOIN Class
+    On Enrolls.semester = Class.semester
+  WHERE Class.course_number = 'CSCI3700' AND Enrolls.semester = 'SPRING13';
 
 PROMPT Answer for Question 5;
 
