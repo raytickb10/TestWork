@@ -1,0 +1,97 @@
+DROP TABLE Student;
+DROP TABLE Class;
+DROP TABLE Instructor;
+DROP TABLE Enrolls;
+DROP TABLE Teaches;
+
+CREATE TABLE Student
+(
+  student_id varchar(255) NOT NULL PRIMARY KEY,
+  student_name varchar(255),
+  major varchar(255),
+  gpa double
+);
+
+CREATE TABLE Class
+(
+  schedule_num int NOT NULL,
+  semester varchar(255) NOT NULL,
+  course_name varchar(255),
+  course_number varchar(255),
+  credit int,
+  department varchar(255),
+  meeting_time varchar(255),
+  meeting_place varchar(255),
+  class_size_limit int,
+  CONSTRAINT pk_schedule PRIMARY KEY(schedule_num, semester)
+);
+
+CREATE TABLE Instructor
+(
+  name varchar(255) NOT NULL PRIMARY KEY,
+  department varchar(255),
+  office varchar(255),
+  title varchar(255)
+);
+
+CREATE TABLE Enrolls
+(
+  student_id varchar(255) FOREIGN KEY REFERENCES Student(student_id),
+  schedule_num int,
+  semester varchar(255),
+  grade varchar(255),
+  CONSTRAINT fk_perClass FOREIGN KEY(schedule_num, semester),
+  REFERENCES Class(schedule_num, semester)
+);
+
+CREATE TABLE Teaches
+(
+  name varchar(255) FOREIGN KEY REFERENCES Instructor(name),
+  schedule_num int,
+  semester varchar(255),
+  CONSTRAINT fk_PerClass FOREIGN KEY(schedule_num, semester),
+  REFERENCES Class(schedule_num, semester)
+);
+
+INSERT INTO Student(student_id, student_name, major, gpa)
+Values ('B00369122', 'John Smith', 'Computer Science', 3.8),
+       ('B00567132', 'Michael Jones', 'Math', 2.8),
+       ('B00259156', 'Lindsay Bluth', 'Engineering', 3.6);
+
+INSERT INTO Class(schedule_num, semester, course_name, course_number, credit, department, meeting_time, meeting_place, class_size_limit)
+Values (569730, 'Spring13', 'Database Design', CSCI3500, 3, 'Computer Science', '12:00', 'Brewster D200', 30),
+       (123654, 'Spring13', 'Organization of Programming Languages', CSCI3675, 3, 'Computer Science', '9:00', 'Austin 306', 35),
+       (254675, 'Fall14', 'Database Management Systems', CSCI3700, 3, 'Computer Science', '1:30', 'Austin 208', 50);
+
+INSERT INTO Instructor(name, department, office, title)
+Values ('Masayuki Tanaka', 'Computer Science', 'SCITECH 305', 'Doctor'),
+       ('James Fitzgerald', 'Math', 'AUSTIN 307', 'Professor'),
+       ('Thomas Johnson', 'Computer Science', 'SCITECH 303', 'Doctor');
+
+INSERT INTO Enrolls(student_id, schedule_num, semester, grade)
+Values ('B00369122', 569730, 'Spring13', 'A'),
+       ('B00567132', 569730, 'Spring13', 'B'),
+       ('B00259156', 123654, 'Spring13', 'C+'),
+       ('B00369122', 123654, 'Spring13', 'B-'),
+       ('B00567132', 254675, 'Fall14', 'C-');
+
+INSERT INTO Teaches(name, schedule_num, semester)
+Values ('Masayuki Tanaka', 569730, 'Spring13'),
+       ('Masayuki Tanaka', 569730, 'Spring13'),
+       ('James Fitzgerald', 123654, 'Spring13'),
+       ('James Fitzgerald', 123654, 'Spring13'),
+       ('Thomas Johnson', 254675, 'Fall14');
+
+SELECT course_name, course_number, semester
+  FROM Class
+  WHERE course_name CONTAINS 'Database';
+
+SELECT major, student_name
+  FROM Student
+  WHERE course_number = CSCI3700 AND semester = Spring13;
+
+SELECT COUNT(major)
+  FROM Student
+WHERE gpa > 3.5;
+
+commit;
