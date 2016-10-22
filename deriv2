@@ -205,17 +205,18 @@ Define
 %Define
 
 ========================================================
-%%			simplifyDifference
+%%			simplifyDiff
 ========================================================
-%% simplifyDifference(e) is a (possibly) simplified form
+%% simplifyDiff(e) is a (possibly) simplified form
 %% of expression e, which is presumed to be a difference.
 %% The following simplifications are employed.
 %%
 %%          a - 0 = a          a - a = 0
+%%
 %%    Computation with constants.  We replace 
 %%    constant(m) - constant(n) by constant(m-n).
 %%
-%% simplifyDifference only looks at e to see if it
+%% simplifyDiff only looks at e to see if it
 %% is exactly one of these forms.  It does not
 %% look inside e for subexpressions that have these
 %% forms.
@@ -227,25 +228,24 @@ Define
   %% constant arithmetic
   ----------------------------------------------------
 
-  case simplifyDifference(constant(m) - constant(n)) = constant(m-n)
+  case simplifyDiff(constant(m) - constant(n)) = constant(m-n)
   
   ----------------------------------------------------
   %% a - a = 0
   ----------------------------------------------------
-  case simplifyDifference(a - a) = constant(0)
+  case simplifyDiff(a - a) = constant(0)
 
   ----------------------------------------------------
   %% a - 0 = a
   ----------------------------------------------------
 
-  case simplifyDifference(a - constant(0))  = a
+  case simplifyDiff(a - constant(0))  = a
 
   ----------------------------------------------------
   %% Otherwise, don't simplify.  Return a as is.
   ----------------------------------------------------
 
-  else simplifyDifference(a)  = a
-  
+  else simplifyDiff(a)  = a 
 %Define
 
 ========================================================
@@ -255,8 +255,8 @@ Define
 %% of expression e, which is presumed to be a product.
 %% The following simplifications are employed.
 %%
-%%          a * 0 = 0		0 * a = 0
-%%			a * 1 = a		1 * a = a
+%%          a * 0 = 0		a * 1 = a
+%%	    0 * a = 0		1 * a = a
 %%
 %%    Computation with constants.  We replace 
 %%    constant(m) * constant(n) with constant(n*m)
@@ -303,22 +303,17 @@ Define
   %% Otherwise, don't simplify.  Return a as is.
   ----------------------------------------------------
 
-  else simplifyProduct(a)  = a
-  
+  else simplifyProduct(a)  = a 
 %Define
 
 ========================================================
-%%			simplifyExponent
+%%			simplifyExp
 ========================================================
 %% simplifyExponent(e) is a (possibly) simplified form
 %% of expression e, which is presumed to be an exponent.
 %% The following simplifications are employed.
 %%
-%%          a ^ 1 = a		
-%%			1 ^ a = 1		
-%%
-%%  
-%%  
+%%          a ^ 1 = a		1 ^ a = 1
 %%
 %% simplifyExponent only looks at e to see if it
 %% is exactly one of these forms.  It does not
@@ -328,24 +323,41 @@ Define
 
 Define
   
-  case simplifyExponent(constant(m) ^ constant(n)) = constant(m^*n) when m =/= 0 and n =/= 0
+  ----------------------------------------------------
+  %% constant arithmetic
+  ----------------------------------------------------
+  
+  case simplifyExp(constant(m) ^ constant(n)) = constant(m^*n) when m =/= 0 and n =/= 0
+  
   ----------------------------------------------------
   %% 1 ^ ? = 1
   ----------------------------------------------------
 
-  case simplifyExponent(constant(1) ^ ?)  = constant(1)
+  case simplifyExp(constant(1) ^ ?)  = constant(1)
   
   ----------------------------------------------------
   %% a ^ 1 = a
   ----------------------------------------------------
 
-  case simplifyExponent(a ^ constant(1))  = a
+  case simplifyExp(a ^ constant(1))  = a
+  
+  ----------------------------------------------------
+  %% 0 ^ a = 0
+  ----------------------------------------------------
+  
+  case simplifyExp(constant(0) ^ ?)  = constant(0)
+  
+  ----------------------------------------------------
+  %% a ^ 0 = 1
+  ----------------------------------------------------
+  
+  case simplifyExp(? ^ constant(0))  = constant(1)
   
   ----------------------------------------------------
   %% Otherwise, don't simplify.  Return a as is.
   ----------------------------------------------------
 
-  else simplifyExponent(a)  = a
+  else simplifyExp(a)  = a
   
 %Define
 
@@ -361,11 +373,10 @@ Define
   case simplify(constant(r)) = constant(r)
   case simplify(=xx)         = xx
   case simplify(a + b)       = simplifySum(simplify(a) + simplify(b))
-  case simplify(a - b)       = simplifyDifference(simplify(a) - simplify(b))
+  case simplify(a - b)       = simplifyDiff(simplify(a) - simplify(b))
   case simplify(a * b)	     = simplifyProduct(simplify(a) * simplify(b))
-  case simplify(a ^ b) 	     = simplifyExponent(simplify(a) ^ simplify(b))
+  case simplify(a ^ b) 	     = simplifyExp(simplify(a) ^ simplify(b))
 %Define
-
 
 ========================================================
 %%			Computing Derivatives
@@ -416,7 +427,11 @@ Define
   %% (a ^ c)'	 = 	ca^(c-1) a'
   ----------------------------------------------------
 
-  case rawDeriv(a ^ constant(b)) = constant(b) * a ^ (constant(b - 1)) * rawDeriv(a)
+  case rawDeriv(a ^ constant(c)) = constant(c) * a ^ (constant(c - 1)) * rawDeriv(a)
+  
+  ----------------------------------------------------
+  %% Otherwise, don't derive.  Return a as is.
+  ----------------------------------------------------
   
   else rawDeriv(e) = fail(derivativeX(e))
 %Define
