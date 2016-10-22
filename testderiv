@@ -21,15 +21,14 @@ Execute
   ShowSimplify constant(2) + constant(5) + constant(6).
   ShowSimplify xx + constant(0).
   ShowSimplify constant(0) + xx.
-  ShowSimplify constant(4)-constant(2).
-  ShowSimplify constant(10)-xx.
-  ShowSimplify constant(0)-constant(100).
-  ShowSimplify xx-constant(2) +constant(8)-constant(10).
-  ShowSimplify constant(0)-constant(1).
-  ShowSimplify xx * constant(10).
-  ShowSimplify constant(1) ^ constant(100).
-  ShowSimplify constant(1) * constant(266).
-  ShowSimplify constant(0) * constant(13445).
+  ShowSimplify constant(5)-constant(2).
+  ShowSimplify constant(5)-xx.
+  ShowSimplify constant(0)-constant(50).
+  ShowSimplify xx-constant(2) +constant(5)-constant(3).
+  ShowSimplify constant(0)-constant(2).
+  ShowSimplify xx * constant(5).
+  ShowSimplify constant(2) ^ constant(5).
+  ShowSimplify constant(1) * constant(200).
   ShowSimplify constant(3) * xx.
   Writeln.
 %Execute
@@ -46,11 +45,8 @@ Execute
   Writeln["Deriv tests\n----------"].
   ShowDeriv constant(4) + xx.
   ShowDeriv xx + xx. 
-  ShowDeriv xx -constant(4).
-  ShowDeriv xx * xx *xx.
-  ShowDeriv xx * xx.
-  ShowDeriv xx ^ xx. 
-
+  ShowDeriv xx -constant(2).
+  ShowDeriv xx * xx * xx.
 %Execute
 
 %Package
