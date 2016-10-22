@@ -31,7 +31,6 @@ Execute
   ShowSimplify constant(1) * constant(266).
   ShowSimplify constant(0) * constant(13445).
   ShowSimplify constant(3) * xx.
-  
   Writeln.
 %Execute
 
