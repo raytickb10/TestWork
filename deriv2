@@ -1,6 +1,5 @@
 Package deriv
 
-
 ==============================================================
 %% This package defines type Expression, and 
 %% some functions on expressions, including
@@ -15,7 +14,7 @@ Package deriv
 ==============================================================
 			export
 ==============================================================
-Import "$/math/mathfun".
+
 ==============================================================
 %%			Expression
 ==============================================================
@@ -101,7 +100,6 @@ Expect
 		%: form of expression e.
 %Expect
 
-
 ========================================================
 			implementation
 ========================================================
@@ -147,7 +145,7 @@ Type Expression =
   | Expression * Expression
   
   --------------------------------------------------
-  %% An expression can be a constant to a real number power.
+  %% An expression can be a constant to a certain power.
   --------------------------------------------------
     
   | Expression ^ Expression
@@ -204,7 +202,6 @@ Define
   ----------------------------------------------------
 
   else simplifySum(a)  = a
-  
 %Define
 
 ========================================================
@@ -214,8 +211,7 @@ Define
 %% of expression e, which is presumed to be a difference.
 %% The following simplifications are employed.
 %%
-%%          a - 0 = a
-%%          a - a = 0
+%%          a - 0 = a          a - a = 0
 %%    Computation with constants.  We replace 
 %%    constant(m) - constant(n) by constant(m-n).
 %%
@@ -365,9 +361,9 @@ Define
   case simplify(constant(r)) = constant(r)
   case simplify(=xx)         = xx
   case simplify(a + b)       = simplifySum(simplify(a) + simplify(b))
-  case simplify(a - b)		 = simplifyDifference(simplify(a) - simplify(b))
-  case simplify(a * b)		 = simplifyProduct(simplify(a) * simplify(b))
-  case simplify(a ^ b) 		 = simplifyExponent(simplify(a) ^ simplify(b))
+  case simplify(a - b)       = simplifyDifference(simplify(a) - simplify(b))
+  case simplify(a * b)	     = simplifyProduct(simplify(a) * simplify(b))
+  case simplify(a ^ b) 	     = simplifyExponent(simplify(a) ^ simplify(b))
 %Define
 
 
