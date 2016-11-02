@@ -1,3 +1,7 @@
+%% Brian Raytick
+%% CSCI 3675
+%% 11/01/2016
+
 Package sequent
 
 =============================================
@@ -47,6 +51,422 @@ with
 
 =============================================
                 implementation
+=============================================
+
+Import "collect/search".
+
+Abbrev Rule = Sequent -> Maybe of [Sequent].
+
+=============================================
+%%             basic?
+=============================================
+
+Expect basic?: Sequent -> Boolean
+  %: basic?(s) is true if a formula on the LHS of
+  %: Sequent s also occurs on the RHS.
+%Expect
+
+Define basic? (a |- b) = someSatisfy (x |-> x `in` b) a.
+
+Example basic?([vbl "P"] |- [vbl "P", vbl "Q"]) = true.
+Example basic?([vbl "Q", vbl "R", vbl "P"] |- [vbl "S", vbl "R"]) = true.
+Example basic?([vbl "P", vbl "R"] |- [vbl "Q"]) = false.
+
+=============================================
+%%             negL
+=============================================
+
+Expect negL: Sequent -> Maybe of [Sequent]
+  %: negL(s) is the inference rule for a negated variable
+  %: on the LHS of Sequent s. It yields either nothing, or
+  %: something(L), where L is a list of sequents inferred
+  %: from the rule.
+%Expect
+
+Define
+  --------------------------------------------
+  %%  (alpha |- A, beta)
+  %%  -------------------
+  %%  (-A, alpha |- beta)
+
+  case negL (neg x :: a |- b) = something [a |- x :: b]
+  case negL (?) = nothing
+  --------------------------------------------
+%Define
+
+Example negL ([neg(vbl "P"), vbl "Q"] |- [vbl "R"])
+  = something [[vbl "Q"] |- [vbl "P", vbl "R"]].
+Example negL ([vbl "Q"] |- [vbl "R"]) = nothing.
+
+=============================================
+%%             negR
+=============================================
+
+Expect negR: Sequent -> Maybe of [Sequent]
+  %: negL(s) is the inference rule for a negated variable
+  %: on the RHS of Sequent s. It yields either nothing, or
+  %: something(L), where L is a list of sequents inferred
+  %: from the rule.
+%Expect
+
+Define
+  --------------------------------------------
+  %%  (A, alpha |- beta)
+  %%  -------------------
+  %%  (alpha |- -A, beta)
+  
+  case negR (a |- neg x :: b) = something [x :: a |- b]
+  case negR (?) = nothing
+  --------------------------------------------
+%Define
+
+Example negR ([vbl "Q"] |- [neg(vbl "P"), vbl "R"])
+  = something [[vbl "P", vbl "Q"] |- [vbl "R"]].
+Example negR ([vbl "Q"] |- [vbl "R"]) = nothing.
+
+=============================================
+%%             andL
+=============================================
+
+Expect andL: Sequent -> Maybe of [Sequent]
+  %: andL(s) is the inference rule for a conjunction
+  %: on the LHS of Sequent s. It yields either nothing, or
+  %: something(L), where L is a list of sequents inferred
+  %: from the rule.
+%Expect
+
+Define
+  --------------------------------------------
+  %%  (A, B, alpha |- beta)
+  %%  -----------------------
+  %%  (A /\ B, alpha |- beta)
+  
+  case andL ((x /\ y) :: a |- b) = something [x :: y :: a |- b]
+  case andL (?) = nothing
+  --------------------------------------------
+%Define
+
+Example andL ([(vbl "P" /\ vbl "Q"), vbl "P"] |- [vbl "Q"])
+  = something [[vbl "P", vbl "Q", vbl "P"] |- [vbl "Q"]].
+Example andL ([vbl "P", vbl "Q"] |- [vbl "P"]) = nothing.
+
+=============================================
+%%             andR
+=============================================
+
+Expect andR: Sequent -> Maybe of [Sequent]
+  %: andR(s) is the inference rule for a conjunction
+  %: on the RHS of Sequent s. It yields either nothing, or
+  %: something(L), where L is a list of sequents inferred
+  %: from the rule.
+%Expect
+
+Define
+  --------------------------------------------
+  %%  (alpha |- A, beta), (alpha |- B, beta)
+  %%  --------------------------------------
+  %%  (alpha |- A /\ B, beta)
+  
+  case andR (a |- (x /\ y) :: b) = something [a |- x :: b, a |- y :: b]
+  --------------------------------------------
+  case andR (?) = nothing
+%Define
+
+Example andR ([vbl "P"] |- [(vbl "P" /\ vbl "Q"), vbl "Q"])
+  = something [[vbl "P"] |- [vbl "P", vbl "Q"], 
+               [vbl "P"] |- [vbl "Q", vbl "Q"]].
+Example andR ([vbl "P", vbl "Q"] |- [vbl "P"]) = nothing.
+
+=============================================
+%%             orL
+=============================================
+
+Expect orL: Sequent -> Maybe of [Sequent]
+  %: orL(s) is the inference rule for a disjunction
+  %: on the LHS of Sequent s. It yields either nothing, or
+  %: something(L), where L is a list of sequents inferred
+  %: from the rule.
+%Expect
+
+Define
+  --------------------------------------------
+  %%  (A, alpha |- beta), (B, alpha |- beta)
+  %%  --------------------------------------
+  %%  (A \/ B, alpha |- beta)
+  
+  case orL ((x \/ y) :: a |- b) = something [x :: a |- b, y :: a |- b]
+  case orL (?) = nothing
+  --------------------------------------------
+%Define
+
+Example orL([(vbl "P" \/ vbl "Q"), vbl "R"] |- [vbl "R"])
+  = something [[vbl "P", vbl "R"] |- [vbl "R"],
+               [vbl "Q", vbl "R"] |- [vbl "R"]].
+Example orL([vbl "P", vbl "R"] |- [vbl "R"]) = nothing.
+
+=============================================
+%%             orR
+=============================================
+
+Expect orR: Sequent -> Maybe of [Sequent]
+  %: orR(s) is the inference rule for a disjunction
+  %: on the RHS of Sequent s. It yields either nothing, or
+  %: something(L), where L is a list of sequents inferred
+  %: from the rule.
+%Expect
+
+Define
+  --------------------------------------------
+  %%  (alpha |- A, B, beta)
+  %%  -----------------------
+  %%  (alpha |- A \/ B, beta)
+  
+  case orR (a |- (x \/ y) :: b) = something [a |- x :: y :: b]
+  case orR (?) = nothing
+  --------------------------------------------
+%Define
+
+Example orR([vbl "R"] |- [(vbl "P" \/ vbl "Q"), vbl "R"])
+  = something [[vbl "R"] |- [vbl "P", vbl "Q", vbl "R"]].
+Example orR([vbl "P", vbl "R"] |- [vbl "R"]) = nothing.
+
+=============================================
+%%             impL
+=============================================
+
+Expect impL: Sequent -> Maybe of [Sequent]
+  %: impL(s) is the inference rule for an implication
+  %: on the LHS of Sequent s. It yields either nothing, or
+  %: something(L), where L is a list of sequents inferred
+  %: from the rule.
+%Expect
+
+Define
+  --------------------------------------------
+  %%  (alpha |- A, beta), (B, alpha |- beta)
+  %%  --------------------------------------
+  %%  (A ==> B, alpha |- beta)
+  
+  case impL ((x ==> y) :: a |- b) = something [a |- x :: b, y :: a |- b]
+  case impL (?) = nothing
+  --------------------------------------------
+%Define
+
+Example impL([(vbl "R" ==> vbl "P"), vbl "Q"] |- [vbl "P"])
+  = something [[vbl "Q"] |- [vbl "R", vbl "P"],
+               [vbl "P", vbl "Q"] |- [vbl "P"]].
+Example impL([vbl "P", vbl "R"] |- [vbl "R"]) = nothing.
+
+=============================================
+%%             impR
+=============================================
+
+Expect impR: Sequent -> Maybe of [Sequent]
+  %: impR(s) is the inference rule for an implication
+  %: on the RHS of Sequent s. It yields either nothing, or
+  %: something(L), where L is a list of sequents inferred
+  %: from the rule.
+%Expect
+
+Define
+  --------------------------------------------
+  %%  (A, alpha |- B, beta)
+  %%  ------------------------
+  %%  (alpha |- A ==> B, beta)
+  
+  case impR (a |- (x ==> y) :: b) = something [x :: a |- y :: b]
+  case impR (?) = nothing
+  --------------------------------------------
+%Define
+
+Example impR([vbl "Q"] |- [(vbl "R" ==> vbl "Q"), vbl "P"])
+  = something [[vbl "R", vbl "Q"] |- [vbl "Q", vbl "P"]].
+Example impR([vbl "P", vbl "R"] |- [vbl "R"]) = nothing.
+
+=============================================
+%%             inferable?
+=============================================
+
+Expect inferable?: Formula -> Boolean
+  %: inferable?(f) is true if formula f is not just
+  %: a propositional variable.
+%Expect
+
+--------------------------------------------
+Define inferable? (f) = not vbl?(f).
+--------------------------------------------
+
+Example inferable?(vbl "P") = false.
+Example inferable?((vbl "P" \/ vbl "Q")) = true.
+
+=============================================
+%%             inferFormula?
+=============================================
+
+Expect inferFormula?: [Formula] -> Boolean
+  %: inferFormula?(alpha) is true if list of formulas alpha
+  %: contains at least one inferable formula.
+%Expect
+
+--------------------------------------------
+Define inferFormula? (alpha) = someSatisfy (x |-> inferable?(x)) alpha.
+--------------------------------------------
+
+Example inferFormula? ([vbl "P", vbl "Q"]) = false.
+Example inferFormula? ([neg(vbl "P"), vbl "Q"]) = true.
+
+=============================================
+%%             inferableToFront
+=============================================
+
+Expect inferableToFront: [Formula] -> [Formula]
+  %: inferabletoFront(alpha) yields the list of formulas
+  %: alpha, where an inferable formula has been moved to 
+  %: the front. If no inferable formula exists in alpha
+  %: then the unchanged list is yielded.
+%Expect
+
+Define
+--------------------------------------------
+  case inferableToFront (alpha) = alpha when not inferFormula? (alpha)
+  case inferableToFront (alpha) = beta |
+    ! i = (select (x |-> inferable?(x)) alpha).
+    ! beta = i :: alpha -/ i.
+--------------------------------------------
+%Define
+
+Example inferableToFront ([vbl "P", vbl "Q", (vbl "P" \/ vbl "Q")])
+  = [(vbl "P" \/ vbl "Q"), vbl "P", vbl "Q"].
+Example inferableToFront ([vbl "P", vbl "Q"]) = [vbl "P", vbl "Q"].
+
+=============================================
+%%             seqListValid?
+=============================================
+
+Expect seqListValid?: (Maybe of [Sequent]) -> Boolean
+  %: seqListValid?(Maybe of alpha) is true when all Sequents
+  %: in alpha are valid. The function yields false when alpha 
+  %: is nothing, or when some Sequent in alpha is not valid.
+%Expect
+
+Define
+--------------------------------------------
+  case seqListValid? (something (alpha)) 
+    = allSatisfy (x |-> validSequent?(x)) alpha
+  case seqListValid? (?) = false
+--------------------------------------------
+%Define
+
+Example seqListValid? (something [[vbl "P"] |- [vbl "P"]]) = true.
+Example seqListValid? (something [[vbl "P"] |- [vbl "P"],
+                                  [vbl "Q"] |- [vbl "Q"]]) = true.
+Example seqListValid? (something [[vbl "P"] |- [vbl "Q"],
+                                  [vbl "Q"] |- [vbl "Q"]]) = false.
+Example seqListValid? (nothing) = false.
+
+=============================================
+%%             tryRules
+=============================================
+
+Expect tryRules: (Sequent, [Rule]) -> Boolean
+  %: tryRules(s, beta) is true when some rule in beta
+  %: is capable of proving the validity of Sequent s.
+%Expect
+
+Define
+--------------------------------------------
+  case tryRules (?, []) = false
+  case tryRules (s, h :: t)
+    = seqListValid?(h(s)) or tryRules(s, t)
+--------------------------------------------
+%Define
+
+Example tryRules ([neg(vbl "P"), vbl "P"] |- [vbl "Q"], [negL]) = true.
+Example tryRules ([neg(vbl "P"), vbl "P"] |- [vbl "Q"], [andL]) = false.
+
+=============================================
+%%             inferLeft
+=============================================
+
+Expect inferLeft: Sequent -> Boolean
+  %: inferLeft(s) is true when some left-rule is 
+  %: able to prove the validity of Sequent s.
+%Expect
+
+--------------------------------------------
+Define inferLeft (s) = tryRules (s, [negL, andL, orL, impL]).
+--------------------------------------------
+
+Example inferLeft ([neg(vbl "P"), vbl "P"] |- [vbl "Q"]) = true.
+Example inferLeft ([neg(vbl "Q"), vbl "P"] |- [vbl "Q"]) = false.
+Example inferLeft ([vbl "P"] |- [neg(vbl "Q"), vbl "Q"]) = false.
+
+=============================================
+%%             inferRight
+=============================================
+
+Expect inferRight: Sequent -> Boolean
+  %: inferRight(s) is true when some right-rule is 
+  %: able to prove the validity of Sequent s.
+%Expect
+
+--------------------------------------------
+Define inferRight (s) = tryRules (s, [negR, andR, orR, impR]).
+--------------------------------------------
+
+Example inferRight ([vbl "P"] |- [neg(vbl "Q"), vbl "Q"]) = true.
+Example inferRight ([vbl "P"] |- [neg(vbl "P"), vbl "Q"]) = false.
+Example inferRight ([neg(vbl "P"), vbl "P"] |- [vbl "Q"]) = false.
+
+=============================================
+%%             infer
+=============================================
+
+Expect infer: Sequent -> Boolean
+  %: infer(s) is true when some rule is able to
+  %: prove the validity of Sequent s.
+%Expect
+
+--------------------------------------------
+Define infer (alpha |- beta)
+  = inferLeft(inferableToFront(alpha) |- beta) or 
+    inferRight(alpha |- inferableToFront(beta)).
+--------------------------------------------
+
+Example infer ([(vbl "P" /\ vbl "R")] |- [vbl "P"]) = true.
+Example infer ([vbl "P"] |- [(vbl "Q" ==> vbl "P")]) = true.
+Example infer ([(vbl "P" /\ vbl "R")] |- [(vbl "Q" ==> vbl "P")]) = true.
+Example infer ([(vbl "P" /\ vbl "R")] |- [(vbl "P" ==> vbl "Q")]) = false.
+
+=============================================
+%%             validSequent?
+=============================================
+
+Expect validSequent?: Sequent -> Boolean
+  %: validSequent(s) is true when Sequent s is valid.
+%Expect
+
+--------------------------------------------
+Define validSequent? (alpha) = basic?(alpha) or infer(alpha).
+--------------------------------------------
+
+Example validSequent? ([vbl "P", (vbl "Q" /\ vbl "P")] |- [vbl "P"]) = true.
+Example validSequent? ([(vbl "Q" /\ vbl "P")] |- [vbl "Q"]) = true.
+Example validSequent? ([(vbl "Q" ==> vbl "P")] |- [vbl "R"]) = false. 
+
+=============================================
+%%             valid?
+=============================================
+
+--------------------------------------------
+Define valid? (alpha) = validSequent?([] |- [alpha]).
+--------------------------------------------
+
+Example valid? ((vbl "P" /\ vbl "Q") ==> (vbl "P" \/ vbl "Q")) = true.
+Example valid? ((vbl "P") ==> (vbl "P" /\ vbl "Q")) = false.
+
+%Package
+
 =============================================
 
 Import "collect/search".
