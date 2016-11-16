@@ -1,1 +1,383 @@
-adsf
+// Brian Raytick
+// 12/05/16
+
+import java.io.*;
+
+//====================================================================
+//                     Class Expression
+//====================================================================
+
+
+abstract class Expression
+{
+    //---------------------------------------------------------------
+    // simplify() returns a possibly simplified version of this 
+    // expression.
+    //---------------------------------------------------------------
+
+    public abstract Expression simplify();
+
+    //---------------------------------------------------------------
+    // toString() returns a string that described this expression.
+    // It can be used for printing this expression.
+    //---------------------------------------------------------------
+
+    public abstract String toString();
+
+    //---------------------------------------------------------------
+    // rawderiv() returns the derivative of this expression, without
+    // simplification.
+    //---------------------------------------------------------------
+
+    public abstract Expression rawderiv();
+
+    //---------------------------------------------------------------
+    // deriv() returns the derivative of this expression, with
+    // simplification.
+    //---------------------------------------------------------------
+
+    public Expression deriv()
+    {
+    	return rawderiv().simplify();
+    }
+}
+
+//====================================================================
+//                     Class ConstantExpression
+//====================================================================
+// A constant expression is the expression equivalent of a real number.
+//====================================================================
+
+class ConstantExpression extends Expression
+{
+    private double value;
+
+    public ConstantExpression(double v)
+    {
+    	value = v;
+    }
+
+    public Expression rawderiv()
+    {
+    	return new ConstantExpression(0.0);
+    }
+
+    public Expression simplify()
+    {
+    	return this;
+    }
+
+    public String toString()
+    {
+    	return "" + value;
+    }
+
+    public double getvalue()
+    {
+    	return value;
+    }
+}
+
+//====================================================================
+//                     Class VarExpression
+//====================================================================
+// A VarExpression is the independent variable x.
+//====================================================================
+
+class VarExpression extends Expression
+{
+    public VarExpression()
+    {
+    }
+
+    public Expression rawderiv()
+    {
+    	return new ConstantExpression(1.0);
+    }
+
+    public Expression simplify()
+    {
+    	return this;
+    }
+
+    public String toString()
+    {
+    	return "x";
+    }
+
+}
+
+//====================================================================
+//                    Class SumExpression
+//====================================================================
+// A SumExpression is an expression that is the sum of two other
+// expressions.
+//====================================================================
+
+class SumExpression extends Expression
+{
+    private Expression addend1, addend2;
+
+    public SumExpression(Expression e1, Expression e2)
+    {
+    	addend1 = e1;
+    	addend2 = e2;
+    }
+
+    public Expression rawderiv()
+    {
+    	return new SumExpression(addend1.rawderiv(), addend2.rawderiv());
+    }
+
+    public Expression simplify()
+    {
+    	return simplifySum(addend1.simplify(), addend2.simplify());
+    }
+
+    public String toString()
+    {
+    	return "(" + addend1.toString() + "+" + addend2.toString() + ")";
+    }
+
+    private static Expression simplifySum(Expression e1, Expression e2)
+    {
+    	// 0 + x = x and constant arithmetic
+
+    	if(e1 instanceof ConstantExpression) {
+    		ConstantExpression ce = (ConstantExpression) e1;
+
+    		// 0 + x = x
+
+    		if(ce.getvalue() == 0.0) {
+    			return e2;
+    		}
+
+    		// Constant arithmetic 
+
+    		if(e2 instanceof ConstantExpression) {
+    			ConstantExpression ce2 = (ConstantExpression) e2;
+    			return new ConstantExpression(ce.getvalue() + ce2.getvalue());
+    		}
+    	}
+
+    	// x + 0 = x
+
+    	if(e2 instanceof ConstantExpression) {
+    		ConstantExpression ce = (ConstantExpression) e2;
+    		if(ce.getvalue() == 0.0) {
+    			return e1;
+    		}
+    	}
+
+    	// Default: do not simplify.
+
+    	return new SumExpression(e1, e2);
+
+    }
+}
+
+//====================================================================
+//					Class DifferenceExpression
+//====================================================================
+//A DifferenceExpression is an expression that is the difference of
+//two other expressions.
+//====================================================================
+
+class DifferenceExpression extends Expression
+{
+	 private Expression addend1, addend2;
+
+	    public DifferenceExpression(Expression e1, Expression e2)
+	    {
+	    	addend1 = e1;
+	    	addend2 = e2;
+	    }
+
+	    public Expression rawderiv()
+	    {
+	    	return new DifferenceExpression(addend1.rawderiv(), addend2.rawderiv());
+	    }
+
+	    public Expression simplify()
+	    {
+	    	return simplifyDifference(addend1.simplify(), addend2.simplify());
+	    }
+
+	    public String toString()
+	    {
+	    	return "(" + addend1.toString() + "-" + addend2.toString() + ")";
+	    }
+
+	    private static Expression simplifyDifference(Expression e1, Expression e2)
+	    {
+	        // constant arithmetic and x - 0 = x
+	        if(e1 instanceof ConstantExpression) {
+	        	ConstantExpression ce = (ConstantExpression) e1;
+
+
+	        	if(e2 instanceof ConstantExpression) {
+	        		ConstantExpression ce2 = (ConstantExpression) e2;
+	        		return new ConstantExpression(ce.getvalue() - ce2.getvalue());
+	        	}
+	        }
+
+	        // x - 0 = x
+
+	        if(e2 instanceof ConstantExpression) {
+	        	ConstantExpression ce = (ConstantExpression) e2;
+	        	if(ce.getvalue() == 0.0) {
+	        		return e1;
+	        	}
+	        }
+
+	        // Default: do not simplify.
+
+	        return new DifferenceExpression(e1, e2);
+	    }
+}
+
+//====================================================================
+//					Class ProductExpression
+//====================================================================
+//A ProductExpression is an expression that is the product of
+//two other expressions.
+//====================================================================
+
+class ProductExpression extends Expression
+{
+	 private Expression addend1, addend2;
+
+	 public ProductExpression(Expression e1, Expression e2)
+	 {
+		 addend1 = e1;
+		 addend2 = e2;
+	 }
+
+	 public Expression rawderiv()
+	 {
+		 return new SumExpression(new ProductExpression(addend1, addend2.rawderiv()), 
+	    						  new ProductExpression(addend1.rawderiv(), addend2));
+	 }
+
+	 public Expression simplify()
+	 {
+		 return simplifyProduct(addend1.simplify(), addend2.simplify());
+	 }
+
+	 public String toString()
+	 {
+		 return "(" + addend1.toString() + "*" + addend2.toString() + ")";
+	 }
+
+	 private static Expression simplifyProduct(Expression e1, Expression e2)
+	 {
+	     // 0 * x = 0, 1 * x = x, constant arithmetic
+	     if(e1 instanceof ConstantExpression) {
+	    	 ConstantExpression ce = (ConstantExpression) e1;
+
+	        // constant multiplication
+	        if(e2 instanceof ConstantExpression) {
+	        	ConstantExpression ce2 = (ConstantExpression) e2;
+	        	return new ConstantExpression(ce.getvalue() * ce2.getvalue());
+	        }
+	        	
+	        // 0 * x = 0
+	        if(ce.getvalue() == 0.0){
+	        	return new ConstantExpression(0.0);
+	        }
+	        	
+	        // 1 * x = x
+	        if(ce.getvalue() == 1.0){
+	        	return e2;
+	        }
+	    }
+
+	    // x * 0 = 0 and x * 1 = x
+	    if(e2 instanceof ConstantExpression) {
+	    	ConstantExpression ce = (ConstantExpression) e2;
+	        	
+	        // x * 0 = 0
+	        if(ce.getvalue() == 0.0) {
+	        	return new ConstantExpression(0.0);
+	        }
+	        	
+	        //x * 1 = x
+	        if(ce.getvalue() == 1.0){
+	        	return e1;
+	        }
+	    }
+
+	    // Default: do not simplify.
+	    return new ProductExpression(e1, e2);
+	}
+}
+
+//====================================================================
+//Class PowerExpression
+//====================================================================
+//A PowerExpression is an expression raised to a constant
+//power
+//====================================================================
+
+class PowerExpression extends Expression
+{
+	private Expression addend1;
+	private Expression addend2;
+
+	public PowerExpression(Expression e1, Expression e2)
+	{
+		addend1 = e1;
+		addend2 = e2;
+	}
+
+	public Expression rawderiv()
+	{
+		return new ProductExpression(new ProductExpression(addend2, new PowerExpression(addend1, new ConstantExpression(((ConstantExpression) addend2).getvalue() - 1))), addend1.rawderiv());
+	}
+
+	public Expression simplify()
+	{
+		return simplifyPower(addend1.simplify(), addend2);
+	}
+
+	public String toString()
+	{
+		return "(" + addend1.toString() + "^" + addend2.toString() + ")";
+	}
+
+	private static Expression simplifyPower(Expression e1, Expression e2)
+	{
+		// 1 ^ x = 1, 0 ^ x = 0
+		if(e1 instanceof ConstantExpression) {
+			ConstantExpression ce = (ConstantExpression) e1;
+			
+			// 1 ^ x = 1
+			if(ce.getvalue() == 1.0){
+				return new ConstantExpression(1.0);
+			}
+			
+			// 0 ^ x = 0
+			if(ce.getvalue() == 0.0){
+				return new ConstantExpression(0.0);
+			}
+		}
+
+		// x ^ 1 = x, x ^ 0 = 1
+		if(e2 instanceof ConstantExpression) {
+			ConstantExpression ce = (ConstantExpression) e2;
+
+			// x ^ 1 = x
+			if(ce.getvalue() == 1.0) {
+				return e1;
+			}
+
+			//x ^ 0 = 1
+			if(ce.getvalue() == 0.0){
+				return new ConstantExpression(1.0);
+			}
+		}
+
+		// Default: do not simplify.
+		return new PowerExpression(e1, e2);
+	}
+}
