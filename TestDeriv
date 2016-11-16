@@ -1,1 +1,34 @@
-asdfs
+// Brian Raytick
+// 12/05/16
+
+public class TestDeriv
+{
+    public static void main(String args[])
+    {
+	Expression a = new ConstantExpression(4.0);
+	Expression x = new VarExpression();
+	Expression s = new SumExpression(x, x);
+    Expression t = new SumExpression(x, a);
+    Expression u = new DifferenceExpression(x,x);
+    Expression v = new DifferenceExpression(x,a);
+    Expression w = new ProductExpression(x, a);
+    Expression y = new PowerExpression(x, a);
+    Expression z = new SumExpression(new PowerExpression(x, a), new ProductExpression(x, a));
+    
+    Expression d1 = s.deriv();
+    Expression d2 = t.deriv();
+    Expression d3 = u.deriv();
+    Expression d4 = v.deriv();
+    Expression d5 = w.deriv();
+    Expression d6 = y.deriv();
+    Expression d7 = z.deriv();
+    
+	System.out.println("deriv(" + s + ") = " + d1);
+    System.out.println("deriv(" + t + ") = " + d2);
+    System.out.println("deriv(" + u + ") = " + d3);
+    System.out.println("deriv(" + v + ") = " + d4);
+    System.out.println("deriv(" + w + ") = " + d5);
+    System.out.println("deriv(" + y + ") = " + d6);
+    System.out.println("deriv(" + z + ") = " + d7);
+    }
+}
