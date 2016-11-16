@@ -1,1 +1,174 @@
-asfsaf
+% Brian Raytick
+% 11/11/2015
+
+%==========================================================================
+% add(XS, Y , ZS) is true if ZS = XS ∪ {Y }.
+% Mode: add(in,in,out).
+%==========================================================================
+
+add([], X, [X]).
+add([X|Xs], X, [X|[X|Xs]]).
+
+%==========================================================================
+% remove(XS, Y , ZS) is true if ZS = XS − {Y }.
+% Mode: remove(in,in,out).
+%==========================================================================
+
+remove([],_, []).
+remove([X|Xs], X, Xs).
+
+%==========================================================================
+% follows(S, T ) is true if state T can immediately follow state S in a
+% solution.
+% Mode: follows(in,out).
+%==========================================================================
+
+% One missionary rows boat from left bank to right bank
+follows(state(bank(LeftM, LeftC, boat), bank(RightM, RightC, noboat)),
+		state(bank(LeftM1, LeftC, noboat), bank(RightM1, RightC, boat))) :-
+	member(m, LeftM),
+	remove(LeftM, m, LeftM1),
+	add(RightM, m, RightM1).
+
+% Two missionaries row boat from left bank to right bank
+follows(state(bank(LeftM, LeftC, boat), bank(RightM, RightC, noboat)),
+		state(bank(LeftM1, LeftC, noboat), bank(RightM1, RightC, boat))) :-
+	member(m, LeftM),
+	remove(LeftM, m, L),
+	member(m, L),
+	remove(L, m, LeftM1),
+	add(RightM, m, R),
+	add(R, m, RightM1).
+
+% One cannibal rows boat from left bank to right bank
+follows(state(bank(LeftM, LeftC, boat), bank(RightM, RightC, noboat)),
+		state(bank(LeftM, LeftC1, noboat), bank(RightM, RightC1, boat))) :-
+	member(c, LeftC),
+	remove(LeftC, c, LeftC1),
+	add(RightC, c, RightC1).
+
+% Two cannibals row boat from left bank to right bank
+follows(state(bank(LeftM, LeftC, boat), bank(RightM, RightC, noboat)),
+		state(bank(LeftM, LeftC1, noboat), bank(RightM, RightC1, boat))) :-
+	member(c, LeftC),
+	remove(LeftC, c, L),
+	member(c, L),
+	remove(L, c, LeftC1),
+	add(RightC, c, R),
+	add(R, c, RightC1).
+
+% One cannibal and one missionary row boat from left bank to right bank
+follows(state(bank(LeftM, LeftC, boat), bank(RightM, RightC, noboat)),
+		state(bank(LeftM1, LeftC1, noboat), bank(RightM1, RightC1, boat))) :-
+	member(m, LeftM),
+	remove(LeftM, m, LeftM1),
+	member(c, LeftC),
+	remove(LeftC, c, LeftC1),
+	add(RightM, m, RightM1),
+	add(RightC, c, RightC1).
+%===========================================================================
+% One missionary rows boat from right bank to left bank
+follows(state(bank(LeftM, LeftC, noboat), bank(RightM, RightC, boat)),
+		state(bank(LeftM1, LeftC, boat), bank(RightM1, RightC, noboat))) :-
+	member(m, RightM),
+	remove(RightM, m, RightM1),
+	add(LeftM, m, LeftM1).
+
+% Two missionaries row boat from right bank to left bank
+follows(state(bank(LeftM, LeftC, noboat), bank(RightM, RightC, boat)),
+		state(bank(LeftM1, LeftC, boat), bank(RightM1, RightC, noboat))) :-
+	member(m, RightM),
+	remove(RightM, m, R),
+	member(m, R),
+	remove(R, m, RightM1),
+	add(LeftM, m, L),
+	add(L, m, LeftM1).
+
+% One cannibal rows boat from right bank to left bank
+follows(state(bank(LeftM, LeftC, noboat), bank(RightM, RightC, boat)),
+		state(bank(LeftM, LeftC1, boat), bank(RightM, RightC1, noboat))) :-
+	member(c, RightC),
+	remove(RightC, c, RightC1),
+	add(LeftC, c, LeftC1).
+
+% Two cannibals row boat from right bank to left bank
+follows(state(bank(LeftM, LeftC, noboat), bank(RightM, RightC, boat)),
+		state(bank(LeftM, LeftC1, boat), bank(RightM, RightC1, noboat))) :-
+	member(c, RightC),
+	remove(RightC, c, R),
+	member(c, R),
+	remove(R, c, RightC1),
+	add(LeftC, c, L),
+	add(L, c, LeftC1).
+
+% One cannibal and one missionary row boat from right bank to left bank
+follows(state(bank(LeftM, LeftC, noboat), bank(RightM, RightC, boat)),
+		state(bank(LeftM1, LeftC1, boat), bank(RightM1, RightC1, noboat))) :-
+	member(m, RightM),
+	remove(RightM, m, RightM1),
+	member(c, RightC),
+	remove(RightC, c, RightC1),
+	add(LeftM, m, LeftM1),
+	add(LeftC, c, LeftC1).
+
+%==========================================================================
+% admissibleBank(M,C) is true if there are not more Cannibals than
+% Missionaries (With the exception of no missionaries)
+% Mode: admissibleBank(in,in).
+%==========================================================================
+
+admissibleBank(M,_) :-
+	length(M, 0), !.
+
+admissibleBank(M,C) :-
+	length(M, X),
+	length(C, Y),
+	X>=Y.
+
+%==========================================================================
+% admissible(S) is true if no missionaries are being eaten on either bank
+% in state S.
+% Mode: admissible(in).
+%==========================================================================
+
+admissible(state(bank(LeftM, LeftC,_),bank(RightM, RightC,_))) :-
+	admissibleBank(LeftM, LeftC),
+	admissibleBank(RightM, RightC).
+
+%==========================================================================
+% lengthen(Sol, Longer) is true if Longer = [S | Sol] where S is an
+% admissible state that does not belong to Sol and that can follow the
+% head of Sol. That is, Longer is a slightly longer partial solution.
+% Mode: lengthen(in,out).
+%==========================================================================
+
+lengthen([St | Rest], [NewSt, St | Rest]) :-
+	follows(St, NewSt),
+	admissible(NewSt),
+	\+(member(NewSt, [St | Rest])).
+
+%==========================================================================
+% plan(X, G, L) that takes a list of states X, a goal state G and a
+% list of states L, and is true if L is an extension of X that begins
+% with state G.
+%==========================================================================
+
+plan([Goal | Rest], Goal, [Goal | Rest]).
+plan(PartialSolution, Goal, FullSolution) :-
+	lengthen(PartialSolution, LongerSolution),
+	plan(LongerSolution, Goal, FullSolution).
+
+showSolution([]).
+showSolution([state(Left, Right) | Rest]) :-
+	write(Left), write(' '), write(Right), nl,
+	showSolution(Rest).
+
+run :-
+	EmptyBank = bank([],[],noboat),
+	FullBank = bank([m,m,m],[c,c,c],boat),
+	FirstState = state(FullBank, EmptyBank),
+	GoalState = state(EmptyBank, FullBank),
+	plan([FirstState], GoalState, ASolution),
+	reverse(ASolution, FwdSolution),
+	showSolution(FwdSolution),
+	nl.
