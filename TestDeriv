@@ -8,27 +8,36 @@ public class TestDeriv
 	Expression a = new ConstantExpression(4.0);
 	Expression x = new VarExpression();
 	Expression s = new SumExpression(x, x);
-    Expression t = new SumExpression(x, a);
-    Expression u = new DifferenceExpression(x,x);
-    Expression v = new DifferenceExpression(x,a);
-    Expression w = new ProductExpression(x, a);
-    Expression y = new PowerExpression(x, a);
-    Expression z = new SumExpression(new PowerExpression(x, a), new ProductExpression(x, a));
+    	Expression t = new SumExpression(x, a);
+   	Expression b = new DiffExpression(x,x);
+   	Expression c = new DiffExpression(x,a);
+   	Expression d = new ProductExpression(x, a);
+   	Expression e = new ProductExpression(x, x);	
+    	Expression f = new PowerExpression(x, a);
+	Expression g = new PowerExpression(x, x);
+    	Expression h = new SumExpression(new PowerExpression(x, a), new ProductExpression(x, a));
+    	Expression i = new SumExpression(new ProductExpression(x, a), new PowerExpression(x, a));	
     
-    Expression d1 = s.deriv();
-    Expression d2 = t.deriv();
-    Expression d3 = u.deriv();
-    Expression d4 = v.deriv();
-    Expression d5 = w.deriv();
-    Expression d6 = y.deriv();
-    Expression d7 = z.deriv();
+    	Expression d1 = s.deriv();
+    	Expression d2 = t.deriv();
+    	Expression d3 = b.deriv();
+    	Expression d4 = c.deriv();
+    	Expression d5 = d.deriv();
+    	Expression d6 = e.deriv();
+    	Expression d7 = f.deriv();
+    	Expression d8 = g.deriv();
+    	Expression d9 = h.deriv();
+    	Expression d10 = i.deriv();	
     
 	System.out.println("deriv(" + s + ") = " + d1);
-    System.out.println("deriv(" + t + ") = " + d2);
-    System.out.println("deriv(" + u + ") = " + d3);
-    System.out.println("deriv(" + v + ") = " + d4);
-    System.out.println("deriv(" + w + ") = " + d5);
-    System.out.println("deriv(" + y + ") = " + d6);
-    System.out.println("deriv(" + z + ") = " + d7);
+    	System.out.println("deriv(" + t + ") = " + d2);
+    	System.out.println("deriv(" + b + ") = " + d3);
+    	System.out.println("deriv(" + c + ") = " + d4);
+    	System.out.println("deriv(" + d + ") = " + d5);
+    	System.out.println("deriv(" + e + ") = " + d6);
+    	System.out.println("deriv(" + f + ") = " + d7);
+    	System.out.println("deriv(" + g + ") = " + d8);
+    	System.out.println("deriv(" + h + ") = " + d9);	
+    	System.out.println("deriv(" + i + ") = " + d10);	
     }
 }
