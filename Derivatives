@@ -7,34 +7,34 @@ import java.io.*;
 //                     Class Expression
 //====================================================================
 
-
 abstract class Expression
 {
-    //---------------------------------------------------------------
-    // simplify() returns a possibly simplified version of this 
-    // expression.
-    //---------------------------------------------------------------
+  //-----------------------------------------------------
+  // simplify() returns a possibly simplified version of
+  // this expression.
+  //-----------------------------------------------------
 
     public abstract Expression simplify();
 
-    //---------------------------------------------------------------
-    // toString() returns a string that described this expression.
-    // It can be used for printing this expression.
-    //---------------------------------------------------------------
+  //-----------------------------------------------------
+  // toString() returns a string that described this
+  // expression.  It can be used for printing this
+  // expression.
+  //-----------------------------------------------------
 
     public abstract String toString();
 
-    //---------------------------------------------------------------
-    // rawderiv() returns the derivative of this expression, without
-    // simplification.
-    //---------------------------------------------------------------
+  //-----------------------------------------------------
+  // rawderiv() returns the derivative of this expression,
+  // without simplification.
+  //-----------------------------------------------------
 
     public abstract Expression rawderiv();
 
-    //---------------------------------------------------------------
-    // deriv() returns the derivative of this expression, with
-    // simplification.
-    //---------------------------------------------------------------
+  //-----------------------------------------------------
+  // deriv() returns the derivative of this expression,
+  // with simplification.
+  //-----------------------------------------------------
 
     public Expression deriv()
     {
@@ -42,11 +42,12 @@ abstract class Expression
     }
 }
 
-//====================================================================
+//==========================================================
 //                     Class ConstantExpression
-//====================================================================
-// A constant expression is the expression equivalent of a real number.
-//====================================================================
+//==========================================================
+// A constant expression is the expression equivalent of a
+// real number.
+//==========================================================
 
 class ConstantExpression extends Expression
 {
@@ -78,11 +79,11 @@ class ConstantExpression extends Expression
     }
 }
 
-//====================================================================
+//==========================================================
 //                     Class VarExpression
-//====================================================================
+//==========================================================
 // A VarExpression is the independent variable x.
-//====================================================================
+//==========================================================
 
 class VarExpression extends Expression
 {
@@ -104,15 +105,14 @@ class VarExpression extends Expression
     {
     	return "x";
     }
-
 }
 
-//====================================================================
+//==========================================================
 //                    Class SumExpression
-//====================================================================
-// A SumExpression is an expression that is the sum of two other
-// expressions.
-//====================================================================
+//==========================================================
+// A SumExpression is an expression that is the sum of two
+// other expressions.
+//==========================================================
 
 class SumExpression extends Expression
 {
@@ -153,7 +153,6 @@ class SumExpression extends Expression
     		}
 
     		// Constant arithmetic 
-
     		if(e2 instanceof ConstantExpression) {
     			ConstantExpression ce2 = (ConstantExpression) e2;
     			return new ConstantExpression(ce.getvalue() + ce2.getvalue());
@@ -161,7 +160,6 @@ class SumExpression extends Expression
     	}
 
     	// x + 0 = x
-
     	if(e2 instanceof ConstantExpression) {
     		ConstantExpression ce = (ConstantExpression) e2;
     		if(ce.getvalue() == 0.0) {
@@ -170,24 +168,22 @@ class SumExpression extends Expression
     	}
 
     	// Default: do not simplify.
-
     	return new SumExpression(e1, e2);
-
     }
 }
 
-//====================================================================
-//					Class DifferenceExpression
-//====================================================================
-//A DifferenceExpression is an expression that is the difference of
-//two other expressions.
-//====================================================================
+//==========================================================
+//                    Class DiffExpression
+//==========================================================
+// A SumExpression is an expression that is the difference 
+// of two other expressions.
+//==========================================================
 
-class DifferenceExpression extends Expression
+class DiffExpression extends Expression
 {
 	 private Expression addend1, addend2;
 
-	    public DifferenceExpression(Expression e1, Expression e2)
+	    public DiffExpression(Expression e1, Expression e2)
 	    {
 	    	addend1 = e1;
 	    	addend2 = e2;
@@ -195,12 +191,12 @@ class DifferenceExpression extends Expression
 
 	    public Expression rawderiv()
 	    {
-	    	return new DifferenceExpression(addend1.rawderiv(), addend2.rawderiv());
+	    	return new DiffExpression(addend1.rawderiv(), addend2.rawderiv());
 	    }
 
 	    public Expression simplify()
 	    {
-	    	return simplifyDifference(addend1.simplify(), addend2.simplify());
+	    	return simplifyDiff(addend1.simplify(), addend2.simplify());
 	    }
 
 	    public String toString()
@@ -208,13 +204,18 @@ class DifferenceExpression extends Expression
 	    	return "(" + addend1.toString() + "-" + addend2.toString() + ")";
 	    }
 
-	    private static Expression simplifyDifference(Expression e1, Expression e2)
+	    private static Expression simplifyDiff(Expression e1, Expression e2)
 	    {
-	        // constant arithmetic and x - 0 = x
+	        // x - 0 = x and constant arithmetic
 	        if(e1 instanceof ConstantExpression) {
 	        	ConstantExpression ce = (ConstantExpression) e1;
 
+			// x - 0 = x
+			if(ce.getvalue() == 0.0){
+				return e2;
+			}
 
+			// Constant arithmetic
 	        	if(e2 instanceof ConstantExpression) {
 	        		ConstantExpression ce2 = (ConstantExpression) e2;
 	        		return new ConstantExpression(ce.getvalue() - ce2.getvalue());
@@ -222,7 +223,6 @@ class DifferenceExpression extends Expression
 	        }
 
 	        // x - 0 = x
-
 	        if(e2 instanceof ConstantExpression) {
 	        	ConstantExpression ce = (ConstantExpression) e2;
 	        	if(ce.getvalue() == 0.0) {
@@ -231,17 +231,16 @@ class DifferenceExpression extends Expression
 	        }
 
 	        // Default: do not simplify.
-
 	        return new DifferenceExpression(e1, e2);
 	    }
 }
 
-//====================================================================
-//					Class ProductExpression
-//====================================================================
-//A ProductExpression is an expression that is the product of
-//two other expressions.
-//====================================================================
+//==========================================================
+//                    Class ProductExpression
+//==========================================================
+// A ProductExpression is an expression that is the prduct
+// of two other expressions.
+//==========================================================
 
 class ProductExpression extends Expression
 {
@@ -312,12 +311,12 @@ class ProductExpression extends Expression
 	}
 }
 
-//====================================================================
-//Class PowerExpression
-//====================================================================
-//A PowerExpression is an expression raised to a constant
-//power
-//====================================================================
+//==========================================================
+//                    Class PowerExpression
+//==========================================================
+// A PowerExpression is an expression that is raised to a
+// constant power.
+//==========================================================
 
 class PowerExpression extends Expression
 {
@@ -332,7 +331,8 @@ class PowerExpression extends Expression
 
 	public Expression rawderiv()
 	{
-		return new ProductExpression(new ProductExpression(addend2, new PowerExpression(addend1, new ConstantExpression(((ConstantExpression) addend2).getvalue() - 1))), addend1.rawderiv());
+		return new ProductExpression(new ProductExpression(addend2, new PowerExpression(addend1, new ConstantExpression(
+		((ConstantExpression) addend2).getvalue() - 1))), addend1.rawderiv());
 	}
 
 	public Expression simplify()
@@ -347,7 +347,7 @@ class PowerExpression extends Expression
 
 	private static Expression simplifyPower(Expression e1, Expression e2)
 	{
-		// 1 ^ x = 1, 0 ^ x = 0
+		// 1 ^ x = 1 and 0 ^ x = 0
 		if(e1 instanceof ConstantExpression) {
 			ConstantExpression ce = (ConstantExpression) e1;
 			
@@ -362,7 +362,7 @@ class PowerExpression extends Expression
 			}
 		}
 
-		// x ^ 1 = x, x ^ 0 = 1
+		// x ^ 1 = x and x ^ 0 = 1
 		if(e2 instanceof ConstantExpression) {
 			ConstantExpression ce = (ConstantExpression) e2;
 
