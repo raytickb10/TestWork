@@ -1,0 +1,426 @@
+/********************
+
+ *********************/
+ 
+#include <errno.h>
+#include <fcntl.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <unistd.h>
+
+#include "util.h"
+
+//#define DEBUG
+
+//global target array
+static target_t t_array[ MAX_NODES ];
+static int numTargets = 0;
+
+//option booleans
+int check_exec = TRUE;
+int check_time = TRUE;
+
+
+//This function will parse makefile input from user or default makeFile.
+int parse(char * lpszFileName)
+{
+    //reading file
+    int nLine=0;
+    char szLine[1024];
+    char * lpszLine;
+    FILE * fp = file_open( lpszFileName );
+
+    //token creation
+    int numTokens = 0;
+    char **tokens;
+    const char delimiter[ 2 ] = " ";
+
+    //node building
+    char* target = "";
+    target_t * active;
+    int n = 0;
+    int i;
+
+
+    if( fp == NULL )
+    {
+        return -1;
+    }
+
+    while( file_getline( szLine, fp ) != NULL )
+    {
+        // this loop will go through the given file, one line at a time
+
+        //Remove newline character at end if there is one
+        lpszLine = strtok(szLine, "\n");
+
+        //create token List
+        numTokens = makeargv(lpszLine, delimiter, &tokens);
+
+
+        if( numTokens > 0 )
+        {
+            if(tokens[0][0] == '\t')
+            {
+                //store command statement
+                strcpy( (*active).szCommand, &lpszLine[1]);
+            }
+
+            //error if line starts with space (syntax error)
+            else if( tokens[0][0] == ' ' )
+            {
+                fprintf(stderr, "White space not tolerated. \n");
+                fclose(fp);
+                return -1;
+            }
+            else if ( tokens[0][0] == '#' );
+            else
+            {
+                //set current node being edited.
+                active = &t_array[ n ];
+
+
+                //strip colon
+                tokens[0][strlen(tokens[0]) - 1] = 0;
+
+                //Check for duplicate target names
+                for( i = 0 ; i < numTargets ; i++)
+                {
+                    if( !strcmp(t_array[i].szTarget, tokens[0]))
+                    {
+                        fprintf(stderr, "Duplicate targets not tolerated. \n");
+                        fclose(fp);
+                        return -1; //duplicate targets
+                    }
+                }
+
+                //increment numTargets
+                numTargets++;
+                //store target
+                strcpy( (*active).szTarget, tokens[0] );
+
+                //store each dependency
+                for( i = 1 ; i < numTokens ; i++ )
+                {
+                    strcpy( (*active).szDependencies[ i - 1 ], tokens[ i ] );
+                }
+                //set number of dependencies
+                (*active).nDependencyCount = numTokens - 1;
+                if (!(numTokens - 1))
+                {
+                    ( *active ).nStatus = READY;
+                }
+                else
+                {
+                    (*active).nStatus = INELIGIBLE;
+                }
+                //iterates current node for next target
+                n++;
+            }
+        }
+    }
+        //Close the makefile.
+        fclose(fp);
+
+        return 0;
+}
+
+
+
+
+//execute logic recursively for each dependence.
+//If a dependence is a file, return as finished to target
+//Otherwise, continue running as a target. When READY, exec
+//If READY, test to see if building is necessary with file mod times.
+int execute_DAG( char * target )
+{
+    int n;
+    //DAG indexing
+    pid_t childpid[10];
+    int t_index = 0;
+    int found = FALSE;
+
+    //command arguments
+    char ** commandArgs;
+    int numTokens = 0;
+
+    //Time dependency testing
+    int mod_time;
+    int execute = FALSE;
+
+    //status returning
+    int status;
+
+    //check if file/target exists.
+    //returns status NOT_FOUND if it doesn't
+    //if file, then return FINISHED
+    //if target found then set index and boolean found.
+    for( n = 0 ; n < numTargets ; n++)
+    {
+        if( !(strcmp( t_array[n].szTarget , target )) )
+        {
+            t_index = n;
+            found = TRUE;
+        }
+    }
+    if( !found )
+    {
+        if(!is_file_exist(target))
+        {
+            #ifdef DEBUG
+            printf("its a file \n");
+            #endif
+            exit(FINISHED);
+        }
+        else
+        {
+            fprintf(stderr, "Target not found. \n");
+            exit( NOT_FOUND );
+        }
+    }
+    //if target has dependencies, fork and build the dependencies recursively
+    //change to READY when applicable
+    if( t_array[t_index].nStatus == INELIGIBLE )
+    {
+        for( n = 0; n < t_array[t_index].nDependencyCount ; n++ )
+        {
+        //to avoid targets being built multiple times
+            childpid[n] = fork();
+            if (childpid[n] == 0)
+            {
+                execute_DAG( t_array[t_index].szDependencies[n] );
+            }
+        }
+        //Waits for dependency children to return
+        //if any return EXIT_FAILURE or NOT_FOUND then
+        for( n = t_array[t_index].nDependencyCount ; n > 0 ; n-- )
+        {
+            //refreshes wait if child is currently RUNNING
+            while(wait(&status), WEXITSTATUS(status) == RUNNING);
+
+            //exits immediately if child returned abnormally or with error
+            if( !WIFEXITED(status) || WEXITSTATUS(status) == EXIT_FAILURE || WEXITSTATUS(status) == NOT_FOUND ){
+                _exit(EXIT_FAILURE);
+            }
+        }
+        t_array[t_index].nStatus = READY;
+    }
+
+
+    //if READY...
+    //target has no dependencies remaining, check for command existence and execute.
+    //Change to FINISHED when applicable
+    if( t_array[t_index].nStatus == READY )
+    {
+
+        if( t_array[t_index].szCommand[0] != '\0') //check for command existence
+        {
+            numTokens = makeargv( t_array[t_index].szCommand , " ",  &commandArgs );
+
+            //check time dependence. execute = false if no inputs are new.
+            //True if any are not built
+            //Skip if check_time is false (-B option)
+
+            if(check_time)
+            {
+                if(!t_array[t_index].nDependencyCount)
+                {
+                    execute = TRUE;
+                }
+                else
+                {
+
+                    for(n = 0 ; n < t_array[t_index].nDependencyCount ; n++)
+                    {
+                        mod_time = compare_modification_time( t_array[t_index].szTarget, t_array[t_index].szDependencies[n]);
+                        if( mod_time == -1 || mod_time == 2 )
+                        {
+                            execute = TRUE;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                execute = TRUE;
+            }
+            //Sets status of current target to FINISHED
+            t_array[t_index].nStatus = FINISHED;
+
+            //Checks to see if execution is necessary
+            //skips execution if file was created by parallel process in meantime
+            if(execute)
+            {
+
+              //call command with args
+              //instead of exec, print statements if check_exec == FALSE (-n option)
+                if(check_exec)
+                {
+
+                    #ifdef DEBUG
+                    printf("I will execute now \n");
+                    #endif
+
+                    execvp(commandArgs[0] , commandArgs );
+
+                    fprintf(stderr, "Exec failed. \n");
+                    _exit( EXIT_FAILURE );
+                }
+                else
+                {
+                    fprintf(stdout,"%s\n",t_array[t_index].szCommand);
+                }
+            }
+        }
+    //exits with status FINISHED
+    exit(FINISHED);
+    }
+
+
+
+
+    //else if RUNNING, exit with status RUNNING
+    else if( t_array[t_index].nStatus == RUNNING )
+    {
+        exit( RUNNING );
+    }
+
+  //else if FINISHED exit with status FINISHED
+    else if( t_array[t_index].nStatus == FINISHED )
+    {
+        exit( FINISHED );
+    }
+}
+
+void show_error_message( char * lpszFileName )
+{
+    fprintf(stderr, "Usage: %s [options] [target] : only single target is allowed.\n", lpszFileName);
+    fprintf(stderr, "-f FILE\t\tRead FILE as a maumfile.\n");
+    fprintf(stderr, "-h\t\tPrint this message and exit.\n");
+    fprintf(stderr, "-n\t\tDon't actually execute commands, just print them.\n");
+    fprintf(stderr, "-B\t\tDon't check files timestamps.\n");
+    fprintf(stderr, "-m FILE\t\tRedirect the output to the file specified .\n");
+    exit(0);
+}
+
+int main(int argc, char **argv)
+{
+    // Declarations for getopt
+    extern int optind;
+    extern char * optarg;
+    int ch;
+    char * format = "f:hnBm:";
+
+    // Default makefile name will be Makefile
+    char szMakefile[64] = "Makefile";
+    char szTarget[64];
+    char szLog[64];
+    int log_fd;
+
+    while((ch = getopt(argc, argv, format)) != -1)
+    {
+        switch(ch)
+        {
+        case 'f':
+            strcpy(szMakefile, strdup(optarg));
+            break;
+        case 'n':
+            check_exec = FALSE;
+            break;
+        case 'B':
+            check_time = FALSE;
+            break;
+        case 'm':
+            strcpy(szLog, strdup(optarg));
+
+            //open szLog
+            log_fd = open(szLog, CREATE_FLAGS, CREATE_MODE);
+
+            if (log_fd == -1)
+            {
+                fprintf(stderr, "File open failed");
+                return -1;
+            }
+            //duplicates szLog's open file descriptor into stdout
+            if(dup2(log_fd, STDOUT_FILENO) == -1)
+            {
+                fprintf(stderr, "File redirection failed\n");
+                return -1;
+            }
+
+            //close szLog
+            if(close(log_fd) == -1)
+            {
+                fprintf(stderr, "File close failed");
+            }
+
+            break;
+        default:
+            show_error_message(argv[0]);
+            exit(1);
+        }
+    }
+
+    argc -= optind;
+    argv += optind;
+
+    // at this point, what is left in argv is the targets that were
+    // specified on the command line. argc has the number of them.
+    if(argc > 1)
+    {
+        show_error_message(argv[0]);
+        return EXIT_FAILURE;
+    }
+
+
+
+
+    /* Parse graph file or die */
+    if((parse(szMakefile)) == -1)
+    {
+        return EXIT_FAILURE;
+    }
+
+    //You may start your program by setting the target that make4061 should build.
+    //if target is not set, set it to default (first target from makefile)
+    if(argc == 1)
+    {
+        strcpy(szTarget, argv[0]);
+    }
+    else
+    {
+        strcpy(szTarget, t_array[0].szTarget);
+    }
+
+    #ifdef DEBUG
+    printf("argc : %d \n", argc);
+    printf("argv[0] : %s \n", argv[0]);
+    printf("szMakefile : %s \n", szMakefile);
+    printf("szTarget : %s \n", szTarget);
+    #endif
+
+
+    pid_t childpid;
+    int status;
+
+    //fork the exec processes
+    childpid = fork();
+    if(!childpid)
+    {
+        execute_DAG(szTarget);
+    }
+    //wait for process and get exit status. If it has encountered errors, end program.
+    wait(&status);
+    if(!WIFEXITED(status) || WEXITSTATUS(status) == EXIT_FAILURE)
+    {
+        printf("Failure. \n");
+        return EXIT_FAILURE;
+    }
+    #ifdef DEBUG
+    printf("I finished!\n");
+    #endif
+    return EXIT_SUCCESS;
+}
