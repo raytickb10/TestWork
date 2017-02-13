@@ -1,5 +1,6 @@
 /********************
-
+* Author: Brian Raytick
+* Date: 09/07/2016
  *********************/
  
 #include <errno.h>
