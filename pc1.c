@@ -1,3 +1,9 @@
+/*
+ * Name: Brian Raytick
+ * Class: CSCI 3000 Spring 2017
+ * Instructor: Karl Abrahamson
+*/
+
 #include <stdio.h>
 #include <pthread.h>
 
