@@ -9,8 +9,8 @@
 /* This is just a sample code, modify it to meet your need */
 int main(int argc, char **argv)
 {
-    DIR* FD;
-    struct dirent* in_file;
+    DIR* dirp;
+    struct dirent* dp;
     FILE    *common_file;
     FILE    *entry_file;
     char    buffer[BUFSIZ];
@@ -25,25 +25,25 @@ int main(int argc, char **argv)
     }
 
     /* Scanning the in directory */
-    if (NULL == (FD = opendir (in_dir))) 
+    if (NULL == (dirp = opendir (dirname))) 
     {
         fprintf(stderr, "Error : Failed to open input directory - %s\n", strerror(errno));
         fclose(common_file);
 
         return 1;
     }
-    while ((in_file = readdir(FD))) 
+    while ((dp = readdir(dirp))) 
     {
         /* On linux/Unix we don't want current and parent directories
          * On windows machine too, thanks Greg Hewgill
          */
-        if (!strcmp (in_file->d_name, "."))
+        if (!strcmp (dp->d_name, "."))
             continue;
-        if (!strcmp (in_file->d_name, ".."))    
+        if (!strcmp (dp->d_name, ".."))    
             continue;
         /* Open directory entry file for common operation */
         /* TODO : change permissions to meet your need! */
-        entry_file = fopen(in_file->d_name, "rw");
+        entry_file = fopen(dp->d_name, "rw");
         if (entry_file == NULL)
         {
             fprintf(stderr, "Error : Failed to open entry file - %s\n", strerror(errno));
