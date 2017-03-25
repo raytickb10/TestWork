@@ -16,7 +16,7 @@ int main(int argc, char **argv)
     char    buffer[BUFSIZ];
     
     printf("space ");
-    scanf("%s", &dirname);
+    scanf("%s", dirname);
 
     /* Openiing common file for writing */
     common_file = fopen(path_to_your_common_file, "w");
