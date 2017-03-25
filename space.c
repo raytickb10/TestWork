@@ -65,6 +65,7 @@ int main(int argc, char **argv)
 
     /* Don't forget to close common file before leaving */
     fclose(common_file);
+    closedir(dirp);
 
     return 0;
 }
