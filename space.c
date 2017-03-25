@@ -11,21 +11,11 @@ int main(int argc, char **argv)
 {
     DIR* dirp;
     struct dirent* dp;
-    FILE    *common_file;
     FILE    *entry_file;
     char    buffer[BUFSIZ];
     
     printf("space ");
     scanf("%s", dirname);
-
-    /* Openiing common file for writing */
-    common_file = fopen(path_to_your_common_file, "w");
-    if (common_file == NULL)
-    {
-        fprintf(stderr, "Error : Failed to open common_file - %s\n", strerror(errno));
-
-        return 1;
-    }
 
     /* Scanning the in directory */
     if (NULL == (dirp = opendir (dirname))) 
@@ -44,13 +34,13 @@ int main(int argc, char **argv)
             continue;
         if (!strcmp (dp->d_name, ".."))    
             continue;
+        
         /* Open directory entry file for common operation */
         /* TODO : change permissions to meet your need! */
         entry_file = fopen(dp->d_name, "rw");
         if (entry_file == NULL)
         {
             fprintf(stderr, "Error : Failed to open entry file - %s\n", strerror(errno));
-            fclose(common_file);
 
             return 1;
         }
@@ -65,9 +55,6 @@ int main(int argc, char **argv)
         /* When you finish with the file, close it */
         fclose(entry_file);
     }
-
-    /* Don't forget to close common file before leaving */
-    fclose(common_file);
     closedir(dirp);
 
     return 0;
